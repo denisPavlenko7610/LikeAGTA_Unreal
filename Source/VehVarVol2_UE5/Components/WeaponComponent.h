@@ -42,6 +42,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
 	bool rifleEquipped;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
+	bool IsAiming;
+
 	void handleHit(const FHitResult& hitResult);
 
 	UFUNCTION()

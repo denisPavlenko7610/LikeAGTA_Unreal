@@ -28,9 +28,6 @@ class APlayerCharacter : public ACitizen
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	UWeaponComponent* WeaponComponent;
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
 	
@@ -59,13 +56,19 @@ public:
 	UInputAction* AimAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* getWeaponAction;
+	UInputAction* GetWeaponAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
-	bool IsAiming;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SprintAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UHudWidget> hudWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float WalkSpeed = 300.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float SprintSpeed = 600.0f;
 
 	FORCEINLINE USpringArmComponent* getCameraBoom() const { return CameraBoom; }
 	FORCEINLINE UCameraComponent* getFollowCamera() const { return FollowCamera; }
@@ -80,6 +83,8 @@ public:
 	
 protected:
 	void move(const FInputActionValue& Value);
+	void sprint(const FInputActionValue& Value);
+	void stopSprinting(const FInputActionValue& Value);
 	void look(const FInputActionValue& Value);
 	void aim(const FInputActionValue& Value);
 	void stopAim(const FInputActionValue& Value);

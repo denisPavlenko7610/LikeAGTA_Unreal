@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "Citizen.generated.h"
 
+class UWeaponComponent;
 class UHealthComponent;
 
 UCLASS()
@@ -21,6 +22,9 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	UHealthComponent* HealthComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	UWeaponComponent* WeaponComponent;
 
 	UFUNCTION()
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
