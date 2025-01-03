@@ -8,9 +8,10 @@ public class VehVarVol2_UE5 : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG",
+			"PhysicsCore", "ChaosVehicles" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "ChaosVehicles", "GameplayCameras", "MetasoundEngine", "EngineCameras" });
+		PrivateDependencyModuleNames.AddRange(new string[] {"GameplayCameras", "MetasoundEngine", "EngineCameras" });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

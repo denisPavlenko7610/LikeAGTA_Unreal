@@ -78,7 +78,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			UEnhancedInputLocalPlayerSubsystem>(
 			PlayerController->GetLocalPlayer()))
 		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			Subsystem->AddMappingContext(PlayerMappingContext, 0);
 		}
 	}
 
