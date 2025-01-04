@@ -19,7 +19,7 @@ public:
 	UVehicleInteraction();
 	
 	void enterVehicle(ACar* Vehicle);
-	void exitVehicle();
+	void ExitVehicle();
 	void init(APlayerCharacter* playerCharacter);
 
 private:

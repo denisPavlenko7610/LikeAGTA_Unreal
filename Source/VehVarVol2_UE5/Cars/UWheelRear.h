@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ChaosVehicleWheel.h"
-#include "WheelRear.generated.h"
+#include "UWheelRear.generated.h"
 
 UCLASS()
 class VEHVARVOL2_UE5_API UWheelRear : public UChaosVehicleWheel

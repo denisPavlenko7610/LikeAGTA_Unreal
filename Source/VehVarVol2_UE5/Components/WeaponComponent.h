@@ -19,7 +19,7 @@ class VEHVARVOL2_UE5_API UWeaponComponent : public USkeletalMeshComponent {
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	float DamageAmount = 5.0f;
+	float DamageAmount = 10.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimMontage* fireMontage;

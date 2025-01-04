@@ -27,10 +27,10 @@ void UVehicleInteraction::enterVehicle(ACar* Vehicle)
 	_playerCharacter->GetMovementComponent()->StopMovementImmediately();
 	_playerCharacter->SetActorHiddenInGame(true);
 	_playerCharacter->SetActorEnableCollision(false);
-	Vehicle->possessVehicle(_playerCharacter);
+	Vehicle->PossessVehicle(_playerCharacter);
 }
 
-void UVehicleInteraction::exitVehicle()
+void UVehicleInteraction::ExitVehicle()
 {
 	if (!_currentVehicle)
 		return;

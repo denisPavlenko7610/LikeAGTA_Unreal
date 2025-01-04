@@ -78,7 +78,7 @@ public:
 
 	void getSocketTransformAndVectors(const FName& socketName, FVector& outStart, FVector& outForwardVector) const;
 
-	UVehicleInteraction* getVehicleInteraction() { return _vehicleInteraction; }
+	UVehicleInteraction* GetVehicleInteraction() { return _vehicleInteraction; }
 	UWeaponComponent* getWeaponComponent() { return WeaponComponent; }
 	
 protected:
