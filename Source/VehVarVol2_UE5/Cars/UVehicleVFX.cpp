@@ -24,9 +24,9 @@ void UVehicleVfx::SpawnFireEffect()
 	SpawnEffect(FireParticleTemplate, _fireParticle, FireScale);
 }
 
-void UVehicleVfx::SpawnEffect(UParticleSystem*& ParticleTemplate, UParticleSystemComponent*& newParticleEffect, FVector& scale)
+void UVehicleVfx::SpawnEffect(UParticleSystem*& ParticleTemplate, UParticleSystemComponent*& particleEffect, FVector& scale)
 {
-	if (IsValid(newParticleEffect))
+	if (IsValid(particleEffect))
 		return;
 
 	if (!IsValid(ParticleTemplate))
@@ -35,12 +35,12 @@ void UVehicleVfx::SpawnEffect(UParticleSystem*& ParticleTemplate, UParticleSyste
 		return;
 	}
 
-	newParticleEffect = NewObject<UParticleSystemComponent>(this);
-	newParticleEffect->RegisterComponent();
-	newParticleEffect->AttachToComponent(_car->FireEffectPosition, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	newParticleEffect->SetWorldLocation(_car->FireEffectPosition->GetComponentLocation());
-	newParticleEffect->SetRelativeScale3D(scale);
-	newParticleEffect->SetTemplate(ParticleTemplate);
-	newParticleEffect->ActivateSystem();
+	particleEffect = NewObject<UParticleSystemComponent>(this);
+	particleEffect->RegisterComponent();
+	particleEffect->AttachToComponent(_car->FireEffectPosition, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	particleEffect->SetWorldLocation(_car->FireEffectPosition->GetComponentLocation());
+	particleEffect->SetRelativeScale3D(scale);
+	particleEffect->SetTemplate(ParticleTemplate);
+	particleEffect->ActivateSystem();
 }
 

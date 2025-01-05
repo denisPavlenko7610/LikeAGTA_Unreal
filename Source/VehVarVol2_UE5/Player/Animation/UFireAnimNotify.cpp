@@ -18,6 +18,6 @@ void UFireAnimNotify::fire(USkeletalMeshComponent* skeletalMesh)
 	
 	if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(skeletalMesh->GetOwner()))
 	{
-		PlayerCharacter->getWeaponComponent()->fire();
+		PlayerCharacter->getWeaponComponent()->Fire();
 	}
 }

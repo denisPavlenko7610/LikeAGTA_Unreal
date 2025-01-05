@@ -9,7 +9,8 @@ public class VehVarVol2_UE5 : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG",
-			"PhysicsCore", "ChaosVehicles" });
+			"PhysicsCore", "ChaosVehicles", "GeometryCollectionEngine", "ChaosSolverEngine",
+			"FieldSystemEngine" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {"GameplayCameras", "MetasoundEngine", "EngineCameras" });
 

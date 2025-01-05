@@ -30,14 +30,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
 	UParticleSystem* impactParticle;
 
-	void init(APlayerCharacter* playerCharacter);
-	void fire();
+	void Init(APlayerCharacter* playerCharacter);
+	void Fire();
 	
-	void applyCameraShake();
+	void ShakeCamera();
 
-	void stopFire(const FInputActionValue& inputActionValue);
-	void playFireMontage(UAnimMontage* montage);
-	void handleFireSound() const;
+	void StopFire(const FInputActionValue& inputActionValue);
+	void PlayFireMontage(UAnimMontage* montage);
+	void PlayFireSound() const;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
 	bool rifleEquipped;
@@ -45,16 +45,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
 	bool IsAiming;
 
-	void handleHit(const FHitResult& hitResult);
+	void Hit(const FHitResult& hitResult);
+	void BrakeFractureObject(const FHitResult& HitResult);
 
 	UFUNCTION()
-	void fireAnimation(const FInputActionValue& InputActionValue);
+	void FireAnimation(const FInputActionValue& InputActionValue);
 
 	UFUNCTION()
-	void onMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
-	void spawnFireEffect(FName socketName, FVector& location, FVector& direction);
-	void toggleWeapon(const FInputActionValue& Value);
+	void SpawnFireEffect(FName socketName, FVector& location, FVector& direction);
+	void ToggleWeapon(const FInputActionValue& Value);
 
 private:
 	bool _canFire;
@@ -62,5 +63,5 @@ private:
 	UPROPERTY()
 	APlayerCharacter* _playerCharacter;
 
-	bool performLineTrace(const FVector& start, const FVector& end, FHitResult& outHit) const;
+	bool CheckWeaponTrace(const FVector& start, const FVector& end, FHitResult& outHit) const;
 };

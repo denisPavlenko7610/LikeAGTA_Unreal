@@ -38,5 +38,5 @@ public:
 	void Initialize(ACar* Car);
 	void SpawnSmokeEffect();
 	void SpawnFireEffect();
-	void SpawnEffect(UParticleSystem*& ParticleTemplate, UParticleSystemComponent*& newParticleEffect, FVector& scale);
+	void SpawnEffect(UParticleSystem*& ParticleTemplate, UParticleSystemComponent*& particleEffect, FVector& scale);
 };

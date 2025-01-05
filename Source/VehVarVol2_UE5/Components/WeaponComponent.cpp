@@ -10,59 +10,62 @@
 #include "VehVarVol2_UE5/Effects/Audio/AudioPlayer.h"
 #include "VehVarVol2_UE5/Effects/Camera/UCameraShake.h"
 #include "VehVarVol2_UE5/Player/APlayerCharacter.h"
- #include "Engine/DamageEvents.h"
+#include "Engine/DamageEvents.h"
+#include "Field/FieldSystemComponent.h"
+#include "Field/FieldSystemObjects.h"
+#include "GeometryCollection/GeometryCollectionComponent.h"
 #include "VehVarVol2_UE5/Characters/Citizen.h"
 
-void UWeaponComponent::fireAnimation(const FInputActionValue& InputActionValue)
-{
-	if (!rifleEquipped)
-		return;
-
-	_canFire = false;
-
-	playFireMontage(fireMontage);
-	if (UAnimInstance* AnimInstance = _playerCharacter->GetMesh()->GetAnimInstance())
-	{
-		AnimInstance->OnMontageEnded.AddUniqueDynamic(this, &UWeaponComponent::onMontageEnded);
-	}
-}
-
-void UWeaponComponent::init(APlayerCharacter* playerCharacter)
+void UWeaponComponent::Init(APlayerCharacter* playerCharacter)
 {
 	_playerCharacter = playerCharacter;
 }
 
-void UWeaponComponent::fire()
+void UWeaponComponent::Fire()
 {
 	constexpr float length = 1000.f;
 	const FName socketName = "Muzzle";
-    
+
 	FVector cameraWorldLocation = _playerCharacter->FollowCamera->GetComponentLocation();
 	FVector forwardVector = _playerCharacter->FollowCamera->GetForwardVector();
 
 	FVector startMuzzlePosition;
 	FVector socketForwardVector;
 	_playerCharacter->getSocketTransformAndVectors(socketName, startMuzzlePosition, socketForwardVector);
-    
+
 	FVector endPosition = forwardVector * length + cameraWorldLocation;
 
-	spawnFireEffect(socketName, startMuzzlePosition, forwardVector);
-	handleFireSound();
-    
+	SpawnFireEffect(socketName, startMuzzlePosition, forwardVector);
+	PlayFireSound();
+
 	FHitResult hitResult;
-	if (performLineTrace( cameraWorldLocation, endPosition, hitResult))
+	if (CheckWeaponTrace(cameraWorldLocation, endPosition, hitResult))
 	{
-		handleHit(hitResult);
+		Hit(hitResult);
 	}
-    
-	applyCameraShake();
+
+	ShakeCamera();
 }
 
-bool UWeaponComponent::performLineTrace(const FVector& start, const FVector& end, FHitResult& outHit) const
+void UWeaponComponent::FireAnimation(const FInputActionValue& InputActionValue)
+{
+	if (!rifleEquipped)
+		return;
+
+	_canFire = false;
+
+	PlayFireMontage(fireMontage);
+	if (UAnimInstance* AnimInstance = _playerCharacter->GetMesh()->GetAnimInstance())
+	{
+		AnimInstance->OnMontageEnded.AddUniqueDynamic(this, &UWeaponComponent::OnMontageEnded);
+	}
+}
+
+bool UWeaponComponent::CheckWeaponTrace(const FVector& start, const FVector& end, FHitResult& outHit) const
 {
 	FCollisionQueryParams collisionParams;
 	collisionParams.AddIgnoredActor(_playerCharacter);
-	
+
 	return GetWorld()->LineTraceSingleByChannel(
 		outHit,
 		start,
@@ -72,19 +75,19 @@ bool UWeaponComponent::performLineTrace(const FVector& start, const FVector& end
 	);
 }
 
-void UWeaponComponent::handleHit(const FHitResult& hitResult)
+void UWeaponComponent::Hit(const FHitResult& hitResult)
 {
 	if (!impactParticle)
 		return;
-	
+
 	if (!hitResult.GetActor())
 		return;
-	
+
 	UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s"), *hitResult.GetActor()->GetName());
 
 	FPointDamageEvent PointDamageEvent;
 	PointDamageEvent.HitInfo = hitResult;
-	
+
 	AActor* hitActor = hitResult.GetActor();
 
 	if (!hitActor)
@@ -92,33 +95,76 @@ void UWeaponComponent::handleHit(const FHitResult& hitResult)
 
 	if (hitActor->FindComponentByClass<UHealthComponent>())
 	{
-		hitResult.GetActor()->TakeDamage(DamageAmount, PointDamageEvent, GetOwner()->GetInstigatorController(), _playerCharacter);
-	} else
+		hitResult.GetActor()->TakeDamage(DamageAmount, PointDamageEvent, GetOwner()->GetInstigatorController(),
+		                                 _playerCharacter);
+	}
+	else
 	{
 		if (UParticleSystemComponent* pointEffect = UGameplayStatics::SpawnEmitterAtLocation(
-		GetWorld(),
-		impactParticle,
-		hitResult.ImpactPoint,
-		hitResult.Normal.ToOrientationRotator(),
-		true,
-		EPSCPoolMethod::AutoRelease))
+			GetWorld(),
+			impactParticle,
+			hitResult.ImpactPoint,
+			hitResult.Normal.ToOrientationRotator(),
+			true,
+			EPSCPoolMethod::AutoRelease))
 		{
 			float scale = 0.5f;
 			pointEffect->SetWorldScale3D(FVector(scale));
 		}
 	}
+
+	BrakeFractureObject(hitResult);
 }
 
-void UWeaponComponent::handleFireSound() const
+void UWeaponComponent::BrakeFractureObject(const FHitResult& HitResult)
+{
+	UPrimitiveComponent* hitComponent = HitResult.GetComponent();
+	if (hitComponent->IsSimulatingPhysics())
+	{
+		FVector HitLocation = HitResult.ImpactPoint;
+		FVector ImpulseDirection = HitResult.Normal * -1;
+		float ImpulseStrength = 2000.f;
+
+		if (UGeometryCollectionComponent* GeometryCollection = Cast<UGeometryCollectionComponent>(hitComponent))
+		{
+			UFieldSystemComponent* FieldSystem = NewObject<UFieldSystemComponent>(GeometryCollection->GetOwner());
+			FieldSystem->AttachToComponent(GeometryCollection, FAttachmentTransformRules::KeepWorldTransform);
+			FieldSystem->RegisterComponent();
+
+			URadialFalloff* RadialFalloff = NewObject<URadialFalloff>();
+			RadialFalloff->SetRadialFalloff(
+				ImpulseStrength, // Magnitude
+				0.0f, // MinRange
+				1.0f, // MaxRange
+				0.0f, // Default
+				500, // Radius
+				HitLocation, // Position
+				EFieldFalloffType::Field_FallOff_None
+			);
+			FieldSystem->ApplyPhysicsField(
+				true, // Enabled
+				EFieldPhysicsType::Field_ExternalClusterStrain,
+				nullptr, // No metadata
+				RadialFalloff
+			);
+		}
+		else
+		{
+			hitComponent->AddImpulseAtLocation(ImpulseDirection * ImpulseStrength, HitLocation);
+		}
+	}
+}
+
+void UWeaponComponent::PlayFireSound() const
 {
 	UAudioPlayer::playMetaSoundAtLocation(GetWorld(), _playerCharacter->GetActorLocation(), AudioList::fireSound);
 }
 
-void UWeaponComponent::spawnFireEffect(FName socketName, FVector& location, FVector& direction)
+void UWeaponComponent::SpawnFireEffect(FName socketName, FVector& location, FVector& direction)
 {
 	if (!fireParticle)
 		return;
-    
+
 	float vectorLength = 10.f;
 	FVector adjustedLocation = location + direction * vectorLength;
 	UParticleSystemComponent* fireEffect = UGameplayStatics::SpawnEmitterAttached(
@@ -134,12 +180,12 @@ void UWeaponComponent::spawnFireEffect(FName socketName, FVector& location, FVec
 
 	if (!fireEffect)
 		return;
-    
+
 	float scale = 0.15f;
 	fireEffect->SetWorldScale3D(FVector(scale));
 }
 
-void UWeaponComponent::applyCameraShake()
+void UWeaponComponent::ShakeCamera()
 {
 	if (APlayerController* playerController = Cast<APlayerController>(_playerCharacter->GetController()))
 	{
@@ -147,7 +193,7 @@ void UWeaponComponent::applyCameraShake()
 	}
 }
 
-void UWeaponComponent::stopFire(const FInputActionValue& inputActionValue)
+void UWeaponComponent::StopFire(const FInputActionValue& inputActionValue)
 {
 	if (!rifleEquipped)
 		return;
@@ -155,7 +201,7 @@ void UWeaponComponent::stopFire(const FInputActionValue& inputActionValue)
 	_canFire = true;
 }
 
-void UWeaponComponent::playFireMontage(UAnimMontage* montage)
+void UWeaponComponent::PlayFireMontage(UAnimMontage* montage)
 {
 	if (!montage)
 		return;
@@ -167,15 +213,15 @@ void UWeaponComponent::playFireMontage(UAnimMontage* montage)
 	}
 }
 
-void UWeaponComponent::onMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+void UWeaponComponent::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (_canFire)
 		return;
-	
-	fireAnimation({});
+
+	FireAnimation({});
 }
 
-void UWeaponComponent::toggleWeapon(const FInputActionValue& Value)
+void UWeaponComponent::ToggleWeapon(const FInputActionValue& Value)
 {
 	rifleEquipped = !rifleEquipped;
 	SetHiddenInGame(!rifleEquipped);

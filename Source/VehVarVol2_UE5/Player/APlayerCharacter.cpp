@@ -67,7 +67,7 @@ void APlayerCharacter::BeginPlay()
 	_vehicleInteraction = NewObject<UVehicleInteraction>(this);
 	_vehicleInteraction->init(this);
 
-	WeaponComponent->init(this);
+	WeaponComponent->Init(this);
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -92,11 +92,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::look);
 		EnhancedInputComponent->BindAction(EnterAction, ETriggerEvent::Started, this, &ThisClass::interact);
 		EnhancedInputComponent->BindAction(GetWeaponAction, ETriggerEvent::Started, WeaponComponent,
-		                                   &UWeaponComponent::toggleWeapon);
+		                                   &UWeaponComponent::ToggleWeapon);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, WeaponComponent,
-		                                   &UWeaponComponent::fireAnimation);
+		                                   &UWeaponComponent::FireAnimation);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, WeaponComponent,
-		                                   &UWeaponComponent::stopFire);
+		                                   &UWeaponComponent::StopFire);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &ThisClass::aim);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ThisClass::stopAim);
 	}
