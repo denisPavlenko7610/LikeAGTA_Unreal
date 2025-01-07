@@ -2,7 +2,7 @@
 #include "UWheelRear.h"
 #include "ChaosVehicleWheel.h"
 
-UWheelRear::UWheelRear()
+UWheelRear::UWheelRear(FObjectInitializer const& ObjectInitializer)
 {
 	AxleType = EAxleType::Rear;
 	bAffectedByHandbrake = true;

@@ -9,12 +9,12 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "VehVarVol2_UE5/Effects/Audio/AudioPlayer.h"
 #include "VehVarVol2_UE5/Effects/Camera/UCameraShake.h"
-#include "VehVarVol2_UE5/Player/APlayerCharacter.h"
+#include "VehVarVol2_UE5/Characters/Player/APlayerCharacter.h"
 #include "Engine/DamageEvents.h"
 #include "Field/FieldSystemComponent.h"
 #include "Field/FieldSystemObjects.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
-#include "VehVarVol2_UE5/Characters/Citizen.h"
+#include "VehVarVol2_UE5/Characters/CharacterBase.h"
 
 void UWeaponComponent::Init(APlayerCharacter* playerCharacter)
 {
@@ -123,7 +123,7 @@ void UWeaponComponent::BrakeFractureObject(const FHitResult& HitResult)
 	{
 		FVector HitLocation = HitResult.ImpactPoint;
 		FVector ImpulseDirection = HitResult.Normal * -1;
-		float ImpulseStrength = 2000.f;
+		float ImpulseStrength = 10000.f;
 
 		if (UGeometryCollectionComponent* GeometryCollection = Cast<UGeometryCollectionComponent>(hitComponent))
 		{
@@ -141,6 +141,7 @@ void UWeaponComponent::BrakeFractureObject(const FHitResult& HitResult)
 				HitLocation, // Position
 				EFieldFalloffType::Field_FallOff_None
 			);
+			
 			FieldSystem->ApplyPhysicsField(
 				true, // Enabled
 				EFieldPhysicsType::Field_ExternalClusterStrain,
@@ -157,7 +158,7 @@ void UWeaponComponent::BrakeFractureObject(const FHitResult& HitResult)
 
 void UWeaponComponent::PlayFireSound() const
 {
-	UAudioPlayer::playMetaSoundAtLocation(GetWorld(), _playerCharacter->GetActorLocation(), AudioList::fireSound);
+	UAudioPlayer::PlayMetaSoundAtLocation(GetWorld(), _playerCharacter->GetActorLocation(), AudioList::fireSound);
 }
 
 void UWeaponComponent::SpawnFireEffect(FName socketName, FVector& location, FVector& direction)

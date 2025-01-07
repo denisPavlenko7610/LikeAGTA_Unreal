@@ -9,5 +9,5 @@ class UWheelFront : public UChaosVehicleWheel
 {
 	GENERATED_BODY()
 public:
-	UWheelFront();
+	UWheelFront(FObjectInitializer const& ObjectInitializer);
 };

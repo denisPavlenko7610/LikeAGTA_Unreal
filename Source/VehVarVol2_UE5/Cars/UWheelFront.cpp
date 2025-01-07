@@ -1,6 +1,6 @@
 #include "UWheelFront.h"
 
-UWheelFront::UWheelFront()
+UWheelFront::UWheelFront(FObjectInitializer const& ObjectInitializer)
 {
 	AxleType = EAxleType::Front;
 	bAffectedBySteering = true;

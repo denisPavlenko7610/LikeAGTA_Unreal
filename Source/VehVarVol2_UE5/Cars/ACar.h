@@ -23,7 +23,7 @@ class VEHVARVOL2_UE5_API ACar : public AWheeledVehiclePawn
 	GENERATED_BODY()
 
 public:
-	ACar();
+	ACar(FObjectInitializer const& ObjectInitializer);
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)

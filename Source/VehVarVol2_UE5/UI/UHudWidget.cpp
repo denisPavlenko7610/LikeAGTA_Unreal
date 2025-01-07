@@ -10,17 +10,17 @@ void UHudWidget::NativeConstruct()
 	Super::NativeConstruct();
 }
 
-void UHudWidget::showCrosshair()
+void UHudWidget::ShowCrosshair()
 {
 	CrossHairImage->SetVisibility(ESlateVisibility::Visible);
 }
 
-void UHudWidget::hideCrosshair()
+void UHudWidget::HideCrosshair()
 {
 	CrossHairImage->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UHudWidget::updateHealthBar(float currentHealth, float maxHealth)
+void UHudWidget::UpdateHealthBar(float currentHealth, float maxHealth)
 {
 	float healthPercent = FMath::Clamp(currentHealth / maxHealth, 0.0f, 1.0f);
 

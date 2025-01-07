@@ -28,8 +28,8 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
-	void showCrosshair();
-	void hideCrosshair();
+	void ShowCrosshair();
+	void HideCrosshair();
 
-	void updateHealthBar(float currentHealth, float maxHealth);
+	void UpdateHealthBar(float currentHealth, float maxHealth);
 };

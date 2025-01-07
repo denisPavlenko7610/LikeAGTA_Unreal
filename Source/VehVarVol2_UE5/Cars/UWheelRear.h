@@ -12,5 +12,5 @@ class VEHVARVOL2_UE5_API UWheelRear : public UChaosVehicleWheel
 	GENERATED_BODY()
 
 public:
-	UWheelRear();
+	UWheelRear(FObjectInitializer const& ObjectInitializer);
 };

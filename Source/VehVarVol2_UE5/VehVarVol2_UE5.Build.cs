@@ -10,7 +10,7 @@ public class VehVarVol2_UE5 : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG",
 			"PhysicsCore", "ChaosVehicles", "GeometryCollectionEngine", "ChaosSolverEngine",
-			"FieldSystemEngine" });
+			"FieldSystemEngine", "AIModule", "GameplayTasks", "NavigationSystem" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {"GameplayCameras", "MetasoundEngine", "EngineCameras" });
 

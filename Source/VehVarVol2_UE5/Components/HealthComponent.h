@@ -13,7 +13,7 @@ class UHealthComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	UHealthComponent();
+	UHealthComponent(FObjectInitializer const& ObjectInitializer);
 	
 	UPROPERTY()
 	FOnHealthChangedSignature OnHealthChanged;

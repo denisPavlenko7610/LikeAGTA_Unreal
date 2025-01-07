@@ -10,13 +10,12 @@
 #include "UWheelRear.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-#include "Particles/ParticleSystemComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "VehVarVol2_UE5/Components/HealthComponent.h"
-#include "VehVarVol2_UE5/Player/APlayerCharacter.h"
-#include "VehVarVol2_UE5/Player/Interactions/VehicleInteraction.h"
+#include "VehVarVol2_UE5/Characters/Player/APlayerCharacter.h"
+#include "VehVarVol2_UE5/Characters/Player/Interactions/VehicleInteraction.h"
 
-ACar::ACar()
+ACar::ACar(FObjectInitializer const& ObjectInitializer)
 {
     PrimaryActorTick.bCanEverTick = false;
     VehicleMovement = Cast<UChaosWheeledVehicleMovementComponent>(GetVehicleMovement());

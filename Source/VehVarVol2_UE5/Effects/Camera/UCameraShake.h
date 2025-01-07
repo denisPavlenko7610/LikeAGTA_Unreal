@@ -11,5 +11,5 @@ class UCameraShake : public ULegacyCameraShake
 	GENERATED_BODY()
 
 public:
-	UCameraShake();
+	UCameraShake(FObjectInitializer const& ObjectInitializer);
 };

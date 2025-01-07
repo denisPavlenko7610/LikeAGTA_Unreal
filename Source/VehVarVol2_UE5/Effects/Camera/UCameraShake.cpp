@@ -1,6 +1,6 @@
 #include "UCameraShake.h"
 
-UCameraShake::UCameraShake()
+UCameraShake::UCameraShake(FObjectInitializer const& ObjectInitializer)
 {
 	float amplitude = 0.35f;
 	float frequency = 10.0f;

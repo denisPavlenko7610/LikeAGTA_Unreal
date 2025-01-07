@@ -3,7 +3,7 @@
 #include "GameFramework/DamageType.h"
 #include "Kismet/GameplayStatics.h"
 
-UHealthComponent::UHealthComponent()
+UHealthComponent::UHealthComponent(FObjectInitializer const& ObjectInitializer)
 {
 	MaxHealth = 100.0f;
 }
