@@ -17,13 +17,13 @@ class VEHVARVOL2_UE5_API ACharacterBase : public ACharacter {
 public:
 	ACharacterBase(FObjectInitializer const& ObjectInitializer);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX", meta=(AllowPrivateAccess="true"))
 	UParticleSystem* BloodParticle;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
 	UHealthComponent* HealthComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
 	UWeaponComponent* WeaponComponent;
 
 	UFUNCTION()

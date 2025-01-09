@@ -7,30 +7,34 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "VehVarVol2_UE5/Characters/NPC/AI/NPC_AIController.h"
 
-UBTTask_FindRandomLocation::UBTTask_FindRandomLocation(FObjectInitializer const& ObjectInitializer)
+UBTTask_FindRandomLocation::UBTTask_FindRandomLocation(FObjectInitializer const& ObjectInitializer) : Super(
+	ObjectInitializer)
 {
 	NodeName = "Find Random Location in NavMesh";
 }
 
 EBTNodeResult::Type UBTTask_FindRandomLocation::ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory)
 {
-	if (ANPC_AIController* controller = Cast<ANPC_AIController>(OwnerComponent.GetAIOwner()))
-	{
-		if (APawn* npc = controller->GetPawn())
-		{
-			FVector origin = npc->GetActorLocation();
-			if (UNavigationSystemV1* navSystem = UNavigationSystemV1::GetCurrent(GetWorld()))
-			{
-				FNavLocation resultLocation;
-				if (navSystem->GetRandomPointInNavigableRadius(origin, SearchRadius, resultLocation))
-				{
-					OwnerComponent.GetBlackboardComponent()->SetValueAsVector(GetSelectedBlackboardKey(), resultLocation.Location);
-				}
+	ANPC_AIController* Controller = Cast<ANPC_AIController>(OwnerComponent.GetAIOwner());
+	if (!Controller)
+		return EBTNodeResult::Failed;
 
-				FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
-				return EBTNodeResult::Succeeded;
-			}
-		}
+	APawn* Npc = Controller->GetPawn();
+	if (!Npc)
+		return EBTNodeResult::Failed;
+
+	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(GetWorld());
+	if (!NavSystem)
+		return EBTNodeResult::Failed;
+
+	FNavLocation ResultLocation;
+	FVector Origin = Npc->GetActorLocation();
+	if (NavSystem->GetRandomPointInNavigableRadius(Origin, SearchRadius, ResultLocation))
+	{
+		OwnerComponent.GetBlackboardComponent()->SetValueAsVector(
+			GetSelectedBlackboardKey(), ResultLocation.Location);
 	}
-	return EBTNodeResult::Failed;
+
+	FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
+	return EBTNodeResult::Succeeded;
 }

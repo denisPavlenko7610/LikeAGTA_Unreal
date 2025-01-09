@@ -14,16 +14,16 @@ class VEHVARVOL2_UE5_API UVehicleVfx : public UActorComponent
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere, Category = "FireSettings")
+	UPROPERTY(EditAnywhere, Category = "FireSettings", meta=(AllowPrivateAccess="true"))
 	UParticleSystem* SmokeParticleTemplate;
 
-	UPROPERTY(EditAnywhere, Category = "FireSettings")
+	UPROPERTY(EditAnywhere, Category = "FireSettings", meta=(AllowPrivateAccess="true"))
 	UParticleSystem* FireParticleTemplate;
 
-	UPROPERTY(EditAnywhere, Category = "FireSettings")
+	UPROPERTY(EditAnywhere, Category = "FireSettings", meta=(AllowPrivateAccess="true"))
 	FVector FireScale{0.2f, 0.2f, 0.2f};
 
-	UPROPERTY(EditAnywhere, Category = "FireSettings")
+	UPROPERTY(EditAnywhere, Category = "FireSettings", meta=(AllowPrivateAccess="true"))
 	FVector SmokeScale{1.8f, 1.8f, 1.8f};
 
 	UPROPERTY()

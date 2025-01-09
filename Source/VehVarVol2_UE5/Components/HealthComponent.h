@@ -18,7 +18,7 @@ public:
 	UPROPERTY()
 	FOnHealthChangedSignature OnHealthChanged;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Health")
+	UPROPERTY(BlueprintReadOnly, Category = "Health", meta=(AllowPrivateAccess="true"))
 	bool bIsDead;
 	
 	UFUNCTION()

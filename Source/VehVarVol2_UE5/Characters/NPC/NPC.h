@@ -6,6 +6,7 @@
 #include "VehVarVol2_UE5/Characters/CharacterBase.h"
 #include "NPC.generated.h"
 
+class UAIPerceptionStimuliSourceComponent;
 class UBehaviorTree;
 
 UCLASS()
@@ -21,6 +22,9 @@ public:
 
 	UBehaviorTree* GetBehaviourTree();
 
-protected:
-	virtual void BeginPlay() override;
+private:
+	UPROPERTY()
+	UAIPerceptionStimuliSourceComponent* StimulusSource;
+
+	void SetupStimulusSource();
 };
