@@ -30,21 +30,21 @@ void ANPC_AIController::OnPossess(APawn* InPawn)
 
 void ANPC_AIController::SetupPerceptionSystem()
 {
-	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
+	_sightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
 	SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent")));
 
-	SightConfig->SightRadius = 500.f;
-	SightConfig->LoseSightRadius = SightConfig->SightRadius + 25.f;
-	SightConfig->PeripheralVisionAngleDegrees = 90.f;
-	SightConfig->SetMaxAge(5.f);
-	SightConfig->AutoSuccessRangeFromLastSeenLocation = 520.f;
-	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
-	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
-	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
+	_sightConfig->SightRadius = 500.f;
+	_sightConfig->LoseSightRadius = _sightConfig->SightRadius + 25.f;
+	_sightConfig->PeripheralVisionAngleDegrees = 90.f;
+	_sightConfig->SetMaxAge(5.f);
+	_sightConfig->AutoSuccessRangeFromLastSeenLocation = 520.f;
+	_sightConfig->DetectionByAffiliation.bDetectEnemies = true;
+	_sightConfig->DetectionByAffiliation.bDetectFriendlies = true;
+	_sightConfig->DetectionByAffiliation.bDetectNeutrals = true;
 
-	GetPerceptionComponent()->SetDominantSense(*SightConfig->GetSenseImplementation());
+	GetPerceptionComponent()->SetDominantSense(*_sightConfig->GetSenseImplementation());
 	GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &ANPC_AIController::OnTargetDetected);
-	GetPerceptionComponent()->ConfigureSense(*SightConfig);
+	GetPerceptionComponent()->ConfigureSense(*_sightConfig);
 }
 
 void ANPC_AIController::OnTargetDetected(AActor* Actor, FAIStimulus Stimulus)

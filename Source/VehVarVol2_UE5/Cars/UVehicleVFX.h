@@ -14,17 +14,23 @@ class VEHVARVOL2_UE5_API UVehicleVfx : public UActorComponent
 	GENERATED_BODY()
 	
 public:
+	void Initialize(ACar* Car);
+	void SpawnSmokeEffect();
+	void SpawnFireEffect();
+	void SpawnEffect(UParticleSystem*& ParticleTemplate, UParticleSystemComponent*& particleEffect, FVector& scale);
+
+private:
 	UPROPERTY(EditAnywhere, Category = "FireSettings", meta=(AllowPrivateAccess="true"))
-	UParticleSystem* SmokeParticleTemplate;
+	UParticleSystem* _smokeParticleTemplate;
 
 	UPROPERTY(EditAnywhere, Category = "FireSettings", meta=(AllowPrivateAccess="true"))
-	UParticleSystem* FireParticleTemplate;
+	UParticleSystem* _fireParticleTemplate;
 
 	UPROPERTY(EditAnywhere, Category = "FireSettings", meta=(AllowPrivateAccess="true"))
-	FVector FireScale{0.2f, 0.2f, 0.2f};
+	FVector _fireScale{0.2f, 0.2f, 0.2f};
 
 	UPROPERTY(EditAnywhere, Category = "FireSettings", meta=(AllowPrivateAccess="true"))
-	FVector SmokeScale{1.8f, 1.8f, 1.8f};
+	FVector _smokeScale{1.8f, 1.8f, 1.8f};
 
 	UPROPERTY()
 	UParticleSystemComponent* _smokeParticle;
@@ -34,9 +40,4 @@ public:
 
 	UPROPERTY()
 	ACar* _car;
-
-	void Initialize(ACar* Car);
-	void SpawnSmokeEffect();
-	void SpawnFireEffect();
-	void SpawnEffect(UParticleSystem*& ParticleTemplate, UParticleSystemComponent*& particleEffect, FVector& scale);
 };

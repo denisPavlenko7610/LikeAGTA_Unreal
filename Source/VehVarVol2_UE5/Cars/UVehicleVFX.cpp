@@ -9,19 +9,19 @@
 void UVehicleVfx::Initialize(ACar* Car)
 {
 	_car = Car;
-	FireParticleTemplate = LoadObject<UParticleSystem>(nullptr, TEXT("/Game/VFX/Realistic_Starter_VFX_Pack_Vol2/Particles/Fire/P_Fire_Big.P_Fire_Big"));
-	SmokeParticleTemplate = LoadObject<UParticleSystem>(nullptr, TEXT("/Game/VFX/Realistic_Starter_VFX_Pack_Vol2/Particles/Smoke/P_Smoke_A.P_Smoke_A"));
+	_fireParticleTemplate = LoadObject<UParticleSystem>(nullptr, TEXT("/Game/VFX/Realistic_Starter_VFX_Pack_Vol2/Particles/Fire/P_Fire_Big.P_Fire_Big"));
+	_smokeParticleTemplate = LoadObject<UParticleSystem>(nullptr, TEXT("/Game/VFX/Realistic_Starter_VFX_Pack_Vol2/Particles/Smoke/P_Smoke_A.P_Smoke_A"));
 }
 
 void UVehicleVfx::SpawnSmokeEffect()
 {
-	SpawnEffect(SmokeParticleTemplate, _smokeParticle, SmokeScale);
+	SpawnEffect(_smokeParticleTemplate, _smokeParticle, _smokeScale);
 }
 
 void UVehicleVfx::SpawnFireEffect()
 {
 	_smokeParticle = nullptr;
-	SpawnEffect(FireParticleTemplate, _fireParticle, FireScale);
+	SpawnEffect(_fireParticleTemplate, _fireParticle, _fireScale);
 }
 
 void UVehicleVfx::SpawnEffect(UParticleSystem*& ParticleTemplate, UParticleSystemComponent*& particleEffect, FVector& scale)
@@ -37,8 +37,8 @@ void UVehicleVfx::SpawnEffect(UParticleSystem*& ParticleTemplate, UParticleSyste
 
 	particleEffect = NewObject<UParticleSystemComponent>(this);
 	particleEffect->RegisterComponent();
-	particleEffect->AttachToComponent(_car->FireEffectPosition, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	particleEffect->SetWorldLocation(_car->FireEffectPosition->GetComponentLocation());
+	particleEffect->AttachToComponent(_car->GetFireParticlePosition(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	particleEffect->SetWorldLocation(_car->GetFireParticlePosition()->GetComponentLocation());
 	particleEffect->SetRelativeScale3D(scale);
 	particleEffect->SetTemplate(ParticleTemplate);
 	particleEffect->ActivateSystem();

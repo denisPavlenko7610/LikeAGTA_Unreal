@@ -16,16 +16,16 @@
 ACharacterBase::ACharacterBase(FObjectInitializer const& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = false;
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	_healthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 }
 
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (HealthComponent)
+	if (_healthComponent)
 	{
-		HealthComponent->OnHealthChanged.AddDynamic(this, &ACharacterBase::OnHealthChanged);
+		_healthComponent->OnHealthChanged.AddDynamic(this, &ACharacterBase::OnHealthChanged);
 	}
 }
 
@@ -34,9 +34,9 @@ float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	SpawnImpactParticles(DamageEvent);
 
-	if (HealthComponent)
+	if (_healthComponent)
 	{
-		HealthComponent->takeDamage(this, ActualDamage, DamageEvent.DamageTypeClass
+		_healthComponent->TakeDamage(this, ActualDamage, DamageEvent.DamageTypeClass
 			? DamageEvent.DamageTypeClass.GetDefaultObject() : nullptr, EventInstigator, DamageCauser);
 	}
 
@@ -75,7 +75,7 @@ void ACharacterBase::SpawnImpactParticles(FDamageEvent const& DamageEvent)
 	
 	if (UParticleSystemComponent* pointEffect = UGameplayStatics::SpawnEmitterAtLocation(
 		GetWorld(),
-		BloodParticle,
+		_bloodParticle,
 		hitResult.ImpactPoint,
 		hitResult.Normal.ToOrientationRotator(),
 		true,

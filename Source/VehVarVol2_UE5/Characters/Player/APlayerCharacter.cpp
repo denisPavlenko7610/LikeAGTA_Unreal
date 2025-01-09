@@ -31,7 +31,7 @@ APlayerCharacter::APlayerCharacter(FObjectInitializer const& ObjectInitializer) 
 	MovementComponent->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
 	MovementComponent->JumpZVelocity = 700.f;
 	MovementComponent->AirControl = 0.35f;
-	MovementComponent->MaxWalkSpeed = WalkSpeed;
+	MovementComponent->MaxWalkSpeed = _walkSpeed;
 	MovementComponent->MinAnalogWalkSpeed = 20.f;
 	MovementComponent->BrakingDecelerationWalking = 2000.f;
 	MovementComponent->BrakingDecelerationFalling = 1500.0f;
@@ -40,18 +40,18 @@ APlayerCharacter::APlayerCharacter(FObjectInitializer const& ObjectInitializer) 
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 300.0f;
-	CameraBoom->bUsePawnControlRotation = true;
+	_cameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	_cameraBoom->SetupAttachment(RootComponent);
+	_cameraBoom->TargetArmLength = 300.0f;
+	_cameraBoom->bUsePawnControlRotation = true;
 
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-	FollowCamera->bUsePawnControlRotation = false;
+	_followCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	_followCamera->SetupAttachment(_cameraBoom, USpringArmComponent::SocketName);
+	_followCamera->bUsePawnControlRotation = false;
 
-	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
-	WeaponComponent->SetupAttachment(GetMesh(), FName("WeaponSocket"));
-	WeaponComponent->SetHiddenInGame(true);
+	SetWeaponComponent(CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent")));
+	GetWeaponComponent()->SetupAttachment(GetMesh(), FName("WeaponSocket"));
+	GetWeaponComponent()->SetHiddenInGame(true);
 
 	_initialArmLength = 300.0f;
 	_targetArmLength = 150.0f;
@@ -62,12 +62,12 @@ APlayerCharacter::APlayerCharacter(FObjectInitializer const& ObjectInitializer) 
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	createHUD();
+	CreateHUD();
 
 	_vehicleInteraction = NewObject<UVehicleInteraction>(this);
-	_vehicleInteraction->init(this);
+	_vehicleInteraction->Init(this);
 
-	WeaponComponent->Init(this);
+	GetWeaponComponent()->Init(this);
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -78,27 +78,27 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 			UEnhancedInputLocalPlayerSubsystem>(
 			PlayerController->GetLocalPlayer()))
 		{
-			Subsystem->AddMappingContext(PlayerMappingContext, 0);
+			Subsystem->AddMappingContext(_playerMappingContext, 0);
 		}
 	}
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &ThisClass::sprint);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ThisClass::stopSprinting);
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::move);
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::look);
-		EnhancedInputComponent->BindAction(EnterAction, ETriggerEvent::Started, this, &ThisClass::interact);
-		EnhancedInputComponent->BindAction(GetWeaponAction, ETriggerEvent::Started, WeaponComponent,
+		EnhancedInputComponent->BindAction(_jumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(_jumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		EnhancedInputComponent->BindAction(_sprintAction, ETriggerEvent::Started, this, &ThisClass::Sprint);
+		EnhancedInputComponent->BindAction(_sprintAction, ETriggerEvent::Completed, this, &ThisClass::StopSprinting);
+		EnhancedInputComponent->BindAction(_moveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
+		EnhancedInputComponent->BindAction(_lookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
+		EnhancedInputComponent->BindAction(_enterAction, ETriggerEvent::Started, this, &ThisClass::Interact);
+		EnhancedInputComponent->BindAction(_getWeaponAction, ETriggerEvent::Started, GetWeaponComponent(),
 		                                   &UWeaponComponent::ToggleWeapon);
-		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, WeaponComponent,
+		EnhancedInputComponent->BindAction(_fireAction, ETriggerEvent::Started, GetWeaponComponent(),
 		                                   &UWeaponComponent::FireAnimation);
-		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, WeaponComponent,
+		EnhancedInputComponent->BindAction(_fireAction, ETriggerEvent::Completed, GetWeaponComponent(),
 		                                   &UWeaponComponent::StopFire);
-		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &ThisClass::aim);
-		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ThisClass::stopAim);
+		EnhancedInputComponent->BindAction(_aimAction, ETriggerEvent::Started, this, &ThisClass::Aim);
+		EnhancedInputComponent->BindAction(_aimAction, ETriggerEvent::Completed, this, &ThisClass::StopAim);
 	}
 	else
 	{
@@ -108,17 +108,17 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 }
 
-void APlayerCharacter::createHUD()
+void APlayerCharacter::CreateHUD()
 {
-	if (hudWidget == nullptr)
+	if (_hudWidget == nullptr)
 		return;
 
-	_hud = CreateWidget<UHudWidget>(GetWorld(), hudWidget);
+	_hud = CreateWidget<UHudWidget>(GetWorld(), _hudWidget);
 	_hud->AddToViewport();
 	_hud->HideCrosshair();
 }
 
-void APlayerCharacter::move(const FInputActionValue& Value)
+void APlayerCharacter::Move(const FInputActionValue& Value)
 {
 	if (!Controller)
 		return;
@@ -134,20 +134,20 @@ void APlayerCharacter::move(const FInputActionValue& Value)
 	AddMovementInput(RightDirection, MovementVector.X);
 }
 
-void APlayerCharacter::sprint(const FInputActionValue& Value)
+void APlayerCharacter::Sprint(const FInputActionValue& Value)
 {
-	if (WeaponComponent->rifleEquipped)
+	if (GetWeaponComponent()->rifleEquipped)
 		return;
 
-	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = _sprintSpeed;
 }
 
-void APlayerCharacter::stopSprinting(const FInputActionValue& Value)
+void APlayerCharacter::StopSprinting(const FInputActionValue& Value)
 {
-	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = _walkSpeed;
 }
 
-void APlayerCharacter::look(const FInputActionValue& Value)
+void APlayerCharacter::Look(const FInputActionValue& Value)
 {
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
@@ -158,56 +158,56 @@ void APlayerCharacter::look(const FInputActionValue& Value)
 	AddControllerPitchInput(LookAxisVector.Y);
 }
 
-void APlayerCharacter::aim(const FInputActionValue& Value)
+void APlayerCharacter::Aim(const FInputActionValue& Value)
 {
-	if (!WeaponComponent->rifleEquipped)
+	if (!GetWeaponComponent()->rifleEquipped)
 		return;
 
 	_hud->ShowCrosshair();
-	_initialArmLength = CameraBoom->TargetArmLength;
+	_initialArmLength = _cameraBoom->TargetArmLength;
 	_rightOffset = FVector2d(15, 50);
 	_targetArmLength = 150.0f;
 	_elapsedTimeS = 0.0f;
-	WeaponComponent->IsAiming = true;
+	GetWeaponComponent()->IsAiming = true;
 
-	GetWorld()->GetTimerManager().SetTimer(LerpTimerHandle, this, &APlayerCharacter::updateAimLerp,
+	GetWorld()->GetTimerManager().SetTimer(LerpTimerHandle, this, &APlayerCharacter::UpdateAimLerp,
 	                                       GetWorld()->GetDeltaSeconds(), true);
 }
 
-void APlayerCharacter::stopAim(const FInputActionValue& Value)
+void APlayerCharacter::StopAim(const FInputActionValue& Value)
 {
-	if (!WeaponComponent->rifleEquipped)
+	if (!GetWeaponComponent()->rifleEquipped)
 		return;
 
 	_hud->HideCrosshair();
-	_initialArmLength = CameraBoom->TargetArmLength;
+	_initialArmLength = _cameraBoom->TargetArmLength;
 	_rightOffset = FVector2d(0, 0);
 	_targetArmLength = 300.0f;
 	_elapsedTimeS = 0.0f;
-	WeaponComponent->IsAiming = false;
+	GetWeaponComponent()->IsAiming = false;
 
-	GetWorld()->GetTimerManager().SetTimer(LerpTimerHandle, this, &APlayerCharacter::updateAimLerp,
+	GetWorld()->GetTimerManager().SetTimer(LerpTimerHandle, this, &APlayerCharacter::UpdateAimLerp,
 	                                       GetWorld()->GetDeltaSeconds(), true);
 }
 
-void APlayerCharacter::updateAimLerp()
+void APlayerCharacter::UpdateAimLerp()
 {
 	_elapsedTimeS += GetWorld()->GetDeltaSeconds();
 	float alpha = FMath::Clamp(_elapsedTimeS / _aimLerpDurationS, 0.0f, 1.0f);
 	float newArmLength = FMath::Lerp(_initialArmLength, _targetArmLength, alpha);
 	float newRightOffset = FMath::Lerp(_rightOffset.X, _rightOffset.Y, alpha);
 
-	CameraBoom->TargetArmLength = newArmLength;
-	FVector cameraBoomLocation = CameraBoom->GetRelativeLocation();
+	_cameraBoom->TargetArmLength = newArmLength;
+	FVector cameraBoomLocation = _cameraBoom->GetRelativeLocation();
 	cameraBoomLocation.Y = newRightOffset;
-	CameraBoom->SetRelativeLocation(cameraBoomLocation);
+	_cameraBoom->SetRelativeLocation(cameraBoomLocation);
 
 	if (alpha >= 1.f)
 		GetWorld()->GetTimerManager().ClearTimer(LerpTimerHandle);
 	
 }
 
-void APlayerCharacter::interact()
+void APlayerCharacter::Interact()
 {
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams QueryParams;
@@ -229,21 +229,21 @@ void APlayerCharacter::interact()
 	{
 		if (ACar* Car = Cast<ACar>(Overlap.GetActor()))
 		{
-			_vehicleInteraction->enterVehicle(Car);
+			_vehicleInteraction->EnterVehicle(Car);
 			return;
 		}
 	}
 }
 
-void APlayerCharacter::getSocketTransformAndVectors(const FName& socketName, FVector& outStart,
-                                                    FVector& outForwardVector) const
+void APlayerCharacter::GetSocketTransformAndVectors(const FName& socketName, FVector& outStart,
+                                                    FVector& outForwardVector)
 {
-	FTransform socketTransform = WeaponComponent->GetSocketTransform(socketName);
+	FTransform socketTransform = GetWeaponComponent()->GetSocketTransform(socketName);
 	outStart = socketTransform.GetLocation();
 	outForwardVector = socketTransform.Rotator().Vector();
 }
 
-FRotator APlayerCharacter::getAimRotation()
+FRotator APlayerCharacter::GetAimRotation()
 {
 	FRotator controlRotation = GetControlRotation();
 	FRotator deltaRotation = controlRotation - GetActorRotation();
@@ -258,5 +258,5 @@ void APlayerCharacter::OnHealthChanged(UHealthComponent* OwningHealthComp, float
 {
 	Super::OnHealthChanged(OwningHealthComp, Health, HealthDelta, DamageType, InstigatedBy, DamageCauser);
 
-	_hud->UpdateHealthBar(Health, OwningHealthComp->getMaxHealth());
+	_hud->UpdateHealthBar(Health, OwningHealthComp->GetMaxHealth());
 }

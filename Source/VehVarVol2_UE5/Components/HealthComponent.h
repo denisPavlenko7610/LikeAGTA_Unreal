@@ -15,25 +15,27 @@ class UHealthComponent : public UActorComponent
 public:
 	UHealthComponent(FObjectInitializer const& ObjectInitializer);
 	
+	UFUNCTION()
+	void TakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
+	
+	float GetHealth() const { return _currentHealth; }
+	float GetMaxHealth() { return _maxHealth; }
+	void Heal(float HealAmount);
+	
 	UPROPERTY()
 	FOnHealthChangedSignature OnHealthChanged;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Health", meta=(AllowPrivateAccess="true"))
-	bool bIsDead;
-	
-	UFUNCTION()
-	void takeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
-	
-	float getHealth() const { return CurrentHealth; }
-	float getMaxHealth() { return MaxHealth; }
-	void heal(float HealAmount);
 
 protected:
 	virtual void BeginPlay() override;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CurrentHealth")
-	float MaxHealth;
 
-	UPROPERTY(BlueprintReadOnly, Category = "CurrentHealth")
-	float CurrentHealth;
+private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CurrentHealth", meta=(AllowPrivateAccess="true"))
+	float _maxHealth;
+
+	UPROPERTY(BlueprintReadOnly, Category = "CurrentHealth", meta=(AllowPrivateAccess="true"))
+	float _currentHealth;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Health", meta=(AllowPrivateAccess="true"))
+	bool _isDead;
 };

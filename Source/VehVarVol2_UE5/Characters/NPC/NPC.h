@@ -16,15 +16,15 @@ class VEHVARVOL2_UE5_API ANPC : public ACharacterBase
 
 public:
 	ANPC(FObjectInitializer const& ObjectInitializer);
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI", meta=(AllowPrivateAccess="true"))
-	UBehaviorTree* Tree;
-
+	
 	UBehaviorTree* GetBehaviourTree();
 
 private:
-	UPROPERTY()
-	UAIPerceptionStimuliSourceComponent* StimulusSource;
-
 	void SetupStimulusSource();
+
+	UPROPERTY()
+	UAIPerceptionStimuliSourceComponent* _stimulusSource;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI", meta=(AllowPrivateAccess="true"))
+	UBehaviorTree* _tree;
 };

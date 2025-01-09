@@ -13,12 +13,12 @@ UVehicleInteraction::UVehicleInteraction(FObjectInitializer const& ObjectInitial
 	_exitOffset = FVector(0.f, -200.f, 0.f);
 }
 
-void UVehicleInteraction::init(APlayerCharacter* playerCharacter)
+void UVehicleInteraction::Init(APlayerCharacter* playerCharacter)
 {
 	_playerCharacter = playerCharacter;
 }
 
-void UVehicleInteraction::enterVehicle(ACar* Vehicle)
+void UVehicleInteraction::EnterVehicle(ACar* Vehicle)
 {
 	if (!Vehicle)
 		return;

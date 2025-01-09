@@ -21,12 +21,12 @@ void UVehicleHealthHandler::OnHealthChanged(UHealthComponent* OwningHealthComp, 
 
 	if (Health <= 0)
 	{
-		_car->Destroy();
+		//_car->Destroy();
 		return;
 	}
 
 	if (Health <= _healthLevelToSpawnFire)
-		_car->VehicleVfx->SpawnFireEffect();
+		_car->GetVehicleVFX()->SpawnFireEffect();
 	else if (Health <= _healthLevelToSpawnSmoke)
-		_car->VehicleVfx->SpawnSmokeEffect();
+		_car->GetVehicleVFX()->SpawnSmokeEffect();
 }

@@ -23,7 +23,7 @@ protected:
 
 private:
 	UPROPERTY()
-	UAISenseConfig_Sight* SightConfig;
+	UAISenseConfig_Sight* _sightConfig;
 
 	void SetupPerceptionSystem();
 

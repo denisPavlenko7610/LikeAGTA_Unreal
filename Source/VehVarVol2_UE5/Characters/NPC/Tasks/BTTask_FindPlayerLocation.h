@@ -20,8 +20,8 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Search", meta=(AllowPrivateAccess="true"))
-	bool SearchRandom = false;
+	bool _searchRandom = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Search", meta=(AllowPrivateAccess="true"))
-	float SearchRadius = 200.f;
+	float _searchRadius = 200.f;
 };

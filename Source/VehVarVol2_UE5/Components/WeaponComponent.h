@@ -18,18 +18,6 @@ class VEHVARVOL2_UE5_API UWeaponComponent : public USkeletalMeshComponent {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup", meta=(AllowPrivateAccess="true"))
-	float DamageAmount = 10.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta=(AllowPrivateAccess="true"))
-	UAnimMontage* fireMontage;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX", meta=(AllowPrivateAccess="true"))
-	UParticleSystem* fireParticle;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX", meta=(AllowPrivateAccess="true"))
-	UParticleSystem* impactParticle;
-
 	void Init(APlayerCharacter* playerCharacter);
 	void Fire();
 	
@@ -58,10 +46,22 @@ public:
 	void ToggleWeapon(const FInputActionValue& Value);
 
 private:
+	bool CheckWeaponTrace(const FVector& start, const FVector& end, FHitResult& outHit) const;
+
 	bool _canFire;
 
 	UPROPERTY()
 	APlayerCharacter* _playerCharacter;
 
-	bool CheckWeaponTrace(const FVector& start, const FVector& end, FHitResult& outHit) const;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup", meta=(AllowPrivateAccess="true"))
+	float _damageAmount = 10.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta=(AllowPrivateAccess="true"))
+	UAnimMontage* _fireMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX", meta=(AllowPrivateAccess="true"))
+	UParticleSystem* _fireParticle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX", meta=(AllowPrivateAccess="true"))
+	UParticleSystem* _impactParticle;
 };

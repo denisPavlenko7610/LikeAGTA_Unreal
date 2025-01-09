@@ -15,6 +15,7 @@
 #include "Field/FieldSystemObjects.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
 #include "VehVarVol2_UE5/Characters/CharacterBase.h"
+#include "VehVarVol2_UE5/Effects/Audio/AudioList.h"
 
 void UWeaponComponent::Init(APlayerCharacter* playerCharacter)
 {
@@ -26,12 +27,12 @@ void UWeaponComponent::Fire()
 	constexpr float length = 1000.f;
 	const FName socketName = "Muzzle";
 
-	FVector cameraWorldLocation = _playerCharacter->FollowCamera->GetComponentLocation();
-	FVector forwardVector = _playerCharacter->FollowCamera->GetForwardVector();
+	FVector cameraWorldLocation = _playerCharacter->GetFollowCamera()->GetComponentLocation();
+	FVector forwardVector = _playerCharacter->GetFollowCamera()->GetForwardVector();
 
 	FVector startMuzzlePosition;
 	FVector socketForwardVector;
-	_playerCharacter->getSocketTransformAndVectors(socketName, startMuzzlePosition, socketForwardVector);
+	_playerCharacter->GetSocketTransformAndVectors(socketName, startMuzzlePosition, socketForwardVector);
 
 	FVector endPosition = forwardVector * length + cameraWorldLocation;
 
@@ -54,7 +55,7 @@ void UWeaponComponent::FireAnimation(const FInputActionValue& InputActionValue)
 
 	_canFire = false;
 
-	PlayFireMontage(fireMontage);
+	PlayFireMontage(_fireMontage);
 	if (UAnimInstance* AnimInstance = _playerCharacter->GetMesh()->GetAnimInstance())
 	{
 		AnimInstance->OnMontageEnded.AddUniqueDynamic(this, &UWeaponComponent::OnMontageEnded);
@@ -77,7 +78,7 @@ bool UWeaponComponent::CheckWeaponTrace(const FVector& start, const FVector& end
 
 void UWeaponComponent::Hit(const FHitResult& hitResult)
 {
-	if (!impactParticle)
+	if (!_impactParticle)
 		return;
 
 	if (!hitResult.GetActor())
@@ -95,14 +96,14 @@ void UWeaponComponent::Hit(const FHitResult& hitResult)
 
 	if (hitActor->FindComponentByClass<UHealthComponent>())
 	{
-		hitResult.GetActor()->TakeDamage(DamageAmount, PointDamageEvent, GetOwner()->GetInstigatorController(),
+		hitResult.GetActor()->TakeDamage(_damageAmount, PointDamageEvent, GetOwner()->GetInstigatorController(),
 		                                 _playerCharacter);
 	}
 	else
 	{
 		if (UParticleSystemComponent* pointEffect = UGameplayStatics::SpawnEmitterAtLocation(
 			GetWorld(),
-			impactParticle,
+			_impactParticle,
 			hitResult.ImpactPoint,
 			hitResult.Normal.ToOrientationRotator(),
 			true,
@@ -163,13 +164,13 @@ void UWeaponComponent::PlayFireSound() const
 
 void UWeaponComponent::SpawnFireEffect(FName socketName, FVector& location, FVector& direction)
 {
-	if (!fireParticle)
+	if (!_fireParticle)
 		return;
 
 	float vectorLength = 10.f;
 	FVector adjustedLocation = location + direction * vectorLength;
 	UParticleSystemComponent* fireEffect = UGameplayStatics::SpawnEmitterAttached(
-		fireParticle,
+		_fireParticle,
 		this,
 		socketName,
 		adjustedLocation,

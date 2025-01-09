@@ -12,23 +12,23 @@ ANPC::ANPC(FObjectInitializer const& ObjectInitializer): Super(ObjectInitializer
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
-	WeaponComponent->SetupAttachment(GetMesh(), FName("WeaponSocket"));
-	WeaponComponent->SetHiddenInGame(true);
+	SetWeaponComponent(CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent")));
+	GetWeaponComponent()->SetupAttachment(GetMesh(), FName("WeaponSocket"));
+	GetWeaponComponent()->SetHiddenInGame(true);
 
 	SetupStimulusSource();
 }
 
 void ANPC::SetupStimulusSource()
 {
-	StimulusSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
-	StimulusSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
-	StimulusSource->RegisterWithPerceptionSystem();
+	_stimulusSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
+	_stimulusSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
+	_stimulusSource->RegisterWithPerceptionSystem();
 }
 
 UBehaviorTree* ANPC::GetBehaviourTree()
 {
-	return Tree;
+	return _tree;
 }
 
 

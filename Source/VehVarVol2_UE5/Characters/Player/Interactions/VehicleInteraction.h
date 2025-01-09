@@ -18,9 +18,9 @@ class VEHVARVOL2_UE5_API UVehicleInteraction : public UObject {
 public:
 	UVehicleInteraction(FObjectInitializer const& ObjectInitializer);
 	
-	void enterVehicle(ACar* Vehicle);
+	void EnterVehicle(ACar* Vehicle);
 	void ExitVehicle();
-	void init(APlayerCharacter* playerCharacter);
+	void Init(APlayerCharacter* playerCharacter);
 
 private:
 	UPROPERTY()

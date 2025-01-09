@@ -5,45 +5,45 @@
 
 UHealthComponent::UHealthComponent(FObjectInitializer const& ObjectInitializer)
 {
-	MaxHealth = 100.0f;
+	_maxHealth = 100.0f;
 }
 
 void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	CurrentHealth = MaxHealth;
+	_currentHealth = _maxHealth;
 
 	AActor* owner = GetOwner();
 	if (owner)
 	{
-		owner->OnTakeAnyDamage.AddDynamic(this, &UHealthComponent::takeDamage);
+		owner->OnTakeAnyDamage.AddDynamic(this, &UHealthComponent::TakeDamage);
 	}
 }
 
-void UHealthComponent::takeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+void UHealthComponent::TakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
-	if (bIsDead)
+	if (_isDead)
 		return;
 	
-	if (Damage <= 0.0f || CurrentHealth <= 0.0f)
+	if (Damage <= 0.0f || _currentHealth <= 0.0f)
 		return;
 	
-	CurrentHealth = FMath::Clamp(CurrentHealth - Damage, 0.0f, MaxHealth);
+	_currentHealth = FMath::Clamp(_currentHealth - Damage, 0.0f, _maxHealth);
 	
-	OnHealthChanged.Broadcast(this, CurrentHealth, Damage, DamageType, InstigatedBy, DamageCauser);
+	OnHealthChanged.Broadcast(this, _currentHealth, Damage, DamageType, InstigatedBy, DamageCauser);
 
-	if (CurrentHealth <= 0.0f)
-		bIsDead = true;
+	if (_currentHealth <= 0.0f)
+		_isDead = true;
 }
 
-void UHealthComponent::heal(float HealAmount)
+void UHealthComponent::Heal(float HealAmount)
 {
-	if (HealAmount <= 0.0f || CurrentHealth <= 0.0f)
+	if (HealAmount <= 0.0f || _currentHealth <= 0.0f)
 		return;
 
-	CurrentHealth = FMath::Clamp(CurrentHealth + HealAmount, 0.0f, MaxHealth);
+	_currentHealth = FMath::Clamp(_currentHealth + HealAmount, 0.0f, _maxHealth);
 
-	OnHealthChanged.Broadcast(this, CurrentHealth, -HealAmount, nullptr,
+	OnHealthChanged.Broadcast(this, _currentHealth, -HealAmount, nullptr,
 		nullptr, nullptr);
 }

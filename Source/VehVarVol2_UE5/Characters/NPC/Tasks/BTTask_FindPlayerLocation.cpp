@@ -22,11 +22,11 @@ EBTNodeResult::Type UBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeCompone
 
 
 	FVector TargetLocation = Player->GetActorLocation();
-	if (SearchRandom)
+	if (_searchRandom)
 	{
 		FNavLocation NavLocation;
 		UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(GetWorld());
-		if (NavSystem && NavSystem->GetRandomPointInNavigableRadius(TargetLocation, SearchRadius, NavLocation))
+		if (NavSystem && NavSystem->GetRandomPointInNavigableRadius(TargetLocation, _searchRadius, NavLocation))
 		{
 			TargetLocation = NavLocation.Location;
 		}
