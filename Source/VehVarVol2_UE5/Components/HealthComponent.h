@@ -18,8 +18,8 @@ public:
 	UFUNCTION()
 	void TakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
 	
-	float GetHealth() const { return _currentHealth; }
-	float GetMaxHealth() { return _maxHealth; }
+	float GetHealth() const { return CurrentHealth; }
+	float GetMaxHealth() { return MaxHealth; }
 	void Heal(float HealAmount);
 	
 	UPROPERTY()
@@ -31,11 +31,11 @@ protected:
 
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CurrentHealth", meta=(AllowPrivateAccess="true"))
-	float _maxHealth;
+	float MaxHealth;
 
 	UPROPERTY(BlueprintReadOnly, Category = "CurrentHealth", meta=(AllowPrivateAccess="true"))
-	float _currentHealth;
+	float CurrentHealth;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Health", meta=(AllowPrivateAccess="true"))
-	bool _isDead;
+	bool IsDead;
 };

@@ -24,10 +24,10 @@ public:
 
 private:
 	UPROPERTY()
-	ACar* _currentVehicle;
+	ACar* CurrentVehicle;
 
 	UPROPERTY()
-	APlayerCharacter* _playerCharacter;
+	APlayerCharacter* PlayerCharacter;
 
 	FVector _exitOffset;
 };

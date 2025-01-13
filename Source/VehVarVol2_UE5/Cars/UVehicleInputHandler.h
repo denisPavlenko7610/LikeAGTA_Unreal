@@ -16,9 +16,9 @@ class VEHVARVOL2_UE5_API UVehicleInputHandler : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	void SetupInput(UInputComponent* PlayerInputComponent, ACar* Car);
+	void SetupInput(UInputComponent* playerInputComponent, ACar* car);
 
-	UInputMappingContext* GetCarMappingContext() { return _carMappingContext; }
+	UInputMappingContext* GetCarMappingContext() { return CarMappingContext; }
 
 private:
 	void Throttle(const FInputActionValue& Value);
@@ -30,29 +30,29 @@ private:
 	void LookUp(const FInputActionValue& Value);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* _carMappingContext;
+	UInputMappingContext* CarMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* _enterAction;
+	UInputAction* EnterAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* _throttleAction;
+	UInputAction* ThrottleAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* _brakeAction;
+	UInputAction* BrakeAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* _handbrakeAction;
+	UInputAction* HandbrakeAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* _lookAroundAction;
+	UInputAction* LookAroundAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* _lookUpAction;
+	UInputAction* LookUpAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* _steeringAction;
+	UInputAction* SteeringAction;
 	
 	UPROPERTY()
-	ACar* _car;
+	ACar* Car;
 };

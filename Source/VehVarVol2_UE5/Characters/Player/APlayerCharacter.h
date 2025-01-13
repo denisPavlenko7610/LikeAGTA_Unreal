@@ -28,8 +28,8 @@ class APlayerCharacter : public ACharacterBase
 	GENERATED_BODY()
 
 public:
-	USpringArmComponent* getCameraBoom() const { return _cameraBoom; }
-	UCameraComponent* GetFollowCamera() const { return _followCamera; }
+	USpringArmComponent* getCameraBoom() const { return CameraBoom; }
+	UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	
 	APlayerCharacter(FObjectInitializer const& ObjectInitializer);
 	virtual void BeginPlay() override;
@@ -37,8 +37,8 @@ public:
 	void GetSocketTransformAndVectors(const FName& socketName, FVector& outStart, FVector& outForwardVector);
 	FRotator GetAimRotation();
 
-	UVehicleInteraction* GetVehicleInteraction() { return _vehicleInteraction; }
-	UInputMappingContext* GetPlayerMappingContext() { return _playerMappingContext; }
+	UVehicleInteraction* GetVehicleInteraction() { return VehicleInteraction; }
+	UInputMappingContext* GetPlayerMappingContext() { return PlayerMappingContext; }
 	
 protected:
 	void Move(const FInputActionValue& Value);
@@ -70,51 +70,51 @@ private:
 	float zLimit = 90.0f;
 
 	UPROPERTY()
-	UVehicleInteraction* _vehicleInteraction;
+	UVehicleInteraction* VehicleInteraction;
 
 	UPROPERTY()
-	UHudWidget* _hud;
+	UHudWidget* HUD;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	USpringArmComponent* _cameraBoom;
+	USpringArmComponent* CameraBoom;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* _followCamera;
+	UCameraComponent* FollowCamera;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* _playerMappingContext;
+	UInputMappingContext* PlayerMappingContext;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* _jumpAction;
+	UInputAction* JumpAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* _moveAction;
+	UInputAction* MoveAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* _lookAction;
+	UInputAction* LookAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* _enterAction;
+	UInputAction* EnterAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* _fireAction;
+	UInputAction* FireAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* _aimAction;
+	UInputAction* AimAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* _getWeaponAction;
+	UInputAction* TakeWeaponAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* _sprintAction;
+	UInputAction* SprintAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI", meta=(AllowPrivateAccess="true"))
-	TSubclassOf<UHudWidget> _hudWidget;
+	TSubclassOf<UHudWidget> HudWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta=(AllowPrivateAccess="true"))
-	float _walkSpeed = 300.0f;
+	float WalkSpeed = 300.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta=(AllowPrivateAccess="true"))
-	float _sprintSpeed = 600.0f;
+	float SprintSpeed = 600.0f;
 };
 

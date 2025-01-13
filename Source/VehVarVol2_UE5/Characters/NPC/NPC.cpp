@@ -21,14 +21,19 @@ ANPC::ANPC(FObjectInitializer const& ObjectInitializer): Super(ObjectInitializer
 
 void ANPC::SetupStimulusSource()
 {
-	_stimulusSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
-	_stimulusSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
-	_stimulusSource->RegisterWithPerceptionSystem();
+	StimulusSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("Stimulus"));
+	StimulusSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
+	StimulusSource->RegisterWithPerceptionSystem();
 }
 
 UBehaviorTree* ANPC::GetBehaviourTree()
 {
-	return _tree;
+	return Tree;
+}
+
+APatrolPath* ANPC::GetPatrolPath()
+{
+	return PatrolPath;
 }
 
 

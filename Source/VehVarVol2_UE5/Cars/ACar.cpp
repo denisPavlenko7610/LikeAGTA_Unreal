@@ -18,65 +18,65 @@
 ACar::ACar(FObjectInitializer const& ObjectInitializer)
 {
     PrimaryActorTick.bCanEverTick = false;
-    _vehicleMovement = Cast<UChaosWheeledVehicleMovementComponent>(GetVehicleMovement());
+    VehicleMovement = Cast<UChaosWheeledVehicleMovementComponent>(GetVehicleMovement());
 
     GetMesh()->SetSimulatePhysics(true);
     GetMesh()->SetCollisionProfileName(FName("Vehicle"));
 
-    _collisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComponent"));
-    _collisionComponent->SetSphereRadius(_collisionRadius);
-    _collisionComponent->SetupAttachment(GetRootComponent());
+    CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComponent"));
+    CollisionComponent->SetSphereRadius(CollisionRadius);
+    CollisionComponent->SetupAttachment(GetRootComponent());
 
-    _healthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+    HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 
-    _springArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-    _springArm->TargetArmLength = 650.0f;
-    _springArm->SocketOffset.Z = 150.0f;
-    _springArm->bDoCollisionTest = false;
-    _springArm->bInheritPitch = false;
-    _springArm->bInheritRoll = false;
-    _springArm->bEnableCameraRotationLag = true;
-    _springArm->CameraRotationLagSpeed = 2.0f;
-    _springArm->CameraLagMaxDistance = 50.0f;
-    _springArm->SetRelativeRotation(FRotator(-10, 0, 0));
-    _springArm->SetupAttachment(GetRootComponent());
+    SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+    SpringArm->TargetArmLength = 650.0f;
+    SpringArm->SocketOffset.Z = 150.0f;
+    SpringArm->bDoCollisionTest = false;
+    SpringArm->bInheritPitch = false;
+    SpringArm->bInheritRoll = false;
+    SpringArm->bEnableCameraRotationLag = true;
+    SpringArm->CameraRotationLagSpeed = 2.0f;
+    SpringArm->CameraLagMaxDistance = 50.0f;
+    SpringArm->SetRelativeRotation(FRotator(-10, 0, 0));
+    SpringArm->SetupAttachment(GetRootComponent());
 
-    _vehicleCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("VehicleCamera"));
-    _vehicleCamera->SetupAttachment(_springArm);
+    VehicleCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("VehicleCamera"));
+    VehicleCamera->SetupAttachment(SpringArm);
 
-    _fireEffectPosition = CreateDefaultSubobject<USceneComponent>(TEXT("EffectPosition"));
-    _fireEffectPosition->SetupAttachment(GetRootComponent());
+    FireEffectPosition = CreateDefaultSubobject<USceneComponent>(TEXT("EffectPosition"));
+    FireEffectPosition->SetupAttachment(GetRootComponent());
 
     SetupVehicleComponent();
 
-    _inputHandler = CreateDefaultSubobject<UVehicleInputHandler>(TEXT("InputHandler"));
-    _healthHandler = CreateDefaultSubobject<UVehicleHealthHandler>(TEXT("HealthHandler"));
+    InputHandler = CreateDefaultSubobject<UVehicleInputHandler>(TEXT("InputHandler"));
+    HealthHandler = CreateDefaultSubobject<UVehicleHealthHandler>(TEXT("HealthHandler"));
     
-    _vehicleVfx = CreateDefaultSubobject<UVehicleVfx>(TEXT("VehicleVFX"));
+    VehicleVfx = CreateDefaultSubobject<UVehicleVfx>(TEXT("VehicleVFX"));
 }
 
 void ACar::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (_healthComponent)
+    if (HealthComponent)
     {
-        _healthHandler->Initialize(this, _healthComponent);
+        HealthHandler->Initialize(this, HealthComponent);
     }
 
-    _vehicleVfx->Initialize(this);
+    VehicleVfx->Initialize(this);
 }
 
 void ACar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
-    _inputHandler->SetupInput(PlayerInputComponent, this);
+    InputHandler->SetupInput(PlayerInputComponent, this);
 }
 
-void ACar::PossessVehicle(APlayerCharacter* PlayerCharacter)
+void ACar::PossessVehicle(APlayerCharacter* playerCharacter)
 {
-    _playerCharacter = PlayerCharacter;
-    if (AController* controller = PlayerCharacter->GetController())
+    PlayerCharacter = playerCharacter;
+    if (AController* controller = playerCharacter->GetController())
     {
         ChangeMappingContext(EMappingContextType::VehicleContext);
         controller->Possess(this);
@@ -89,22 +89,22 @@ void ACar::UnpossessVehicle()
     if (!CanAllowExit())
         return;
 
-    if (!_playerCharacter)
+    if (!PlayerCharacter)
         return;
 
-    _playerCharacter->GetVehicleInteraction()->ExitVehicle();
+    PlayerCharacter->GetVehicleInteraction()->ExitVehicle();
     ChangeMappingContext(EMappingContextType::PlayerContext);
-    GetController()->Possess(_playerCharacter);
+    GetController()->Possess(PlayerCharacter);
     SetVehicleCameraActive(false);
-    _playerCharacter = nullptr;
+    PlayerCharacter = nullptr;
 }
 
 void ACar::ChangeMappingContext(EMappingContextType ContextType)
 {
-    if (!_playerCharacter)
+    if (!PlayerCharacter)
         return;
 
-    APlayerController* PlayerController = Cast<APlayerController>(_playerCharacter->GetController());
+    APlayerController* PlayerController = Cast<APlayerController>(PlayerCharacter->GetController());
     if (!PlayerController)
         return;
 
@@ -127,13 +127,13 @@ void ACar::ChangeMappingContext(EMappingContextType ContextType)
     switch (ContextType)
     {
     case EMappingContextType::VehicleContext:
-        RemoveMappingContext(_playerCharacter->GetPlayerMappingContext());
-        AddMappingContext(_inputHandler->GetCarMappingContext());
+        RemoveMappingContext(PlayerCharacter->GetPlayerMappingContext());
+        AddMappingContext(InputHandler->GetCarMappingContext());
         break;
 
     case EMappingContextType::PlayerContext:
-        RemoveMappingContext(_inputHandler->GetCarMappingContext());
-        AddMappingContext(_playerCharacter->GetPlayerMappingContext());
+        RemoveMappingContext(InputHandler->GetCarMappingContext());
+        AddMappingContext(PlayerCharacter->GetPlayerMappingContext());
         break;
     }
 }
@@ -146,41 +146,41 @@ void ACar::SetVehicleCameraActive(bool bActive)
         {
             PlayerController->SetViewTargetWithBlend(this, 0.5f);
         }
-        else if (_playerCharacter)
+        else if (PlayerCharacter)
         {
-            PlayerController->SetViewTargetWithBlend(_playerCharacter, 0.5f);
+            PlayerController->SetViewTargetWithBlend(PlayerCharacter, 0.5f);
         }
     }
 }
 
 void ACar::SetupVehicleComponent()
 {
-    _vehicleMovement->bLegacyWheelFrictionPosition = true;
-    _vehicleMovement->WheelSetups.SetNum(4);
+    VehicleMovement->bLegacyWheelFrictionPosition = true;
+    VehicleMovement->WheelSetups.SetNum(4);
 
-    _vehicleMovement->WheelSetups[0].WheelClass = UWheelFront::StaticClass();
-    _vehicleMovement->WheelSetups[0].BoneName = FName("WheelFL");
-    _vehicleMovement->WheelSetups[0].AdditionalOffset = FVector(0.0f, 0.0f, 0.0f);
+    VehicleMovement->WheelSetups[0].WheelClass = UWheelFront::StaticClass();
+    VehicleMovement->WheelSetups[0].BoneName = FName("WheelFL");
+    VehicleMovement->WheelSetups[0].AdditionalOffset = FVector(0.0f, 0.0f, 0.0f);
 
-    _vehicleMovement->WheelSetups[1].WheelClass = UWheelFront::StaticClass();
-    _vehicleMovement->WheelSetups[1].BoneName = FName("WheelFR");
-    _vehicleMovement->WheelSetups[1].AdditionalOffset = FVector(0.0f, 0.0f, 0.0f);
+    VehicleMovement->WheelSetups[1].WheelClass = UWheelFront::StaticClass();
+    VehicleMovement->WheelSetups[1].BoneName = FName("WheelFR");
+    VehicleMovement->WheelSetups[1].AdditionalOffset = FVector(0.0f, 0.0f, 0.0f);
 
-    _vehicleMovement->WheelSetups[2].WheelClass = UWheelRear::StaticClass();
-    _vehicleMovement->WheelSetups[2].BoneName = FName("WheelRL");
-    _vehicleMovement->WheelSetups[2].AdditionalOffset = FVector(0.0f, 0.0f, 0.0f);
+    VehicleMovement->WheelSetups[2].WheelClass = UWheelRear::StaticClass();
+    VehicleMovement->WheelSetups[2].BoneName = FName("WheelRL");
+    VehicleMovement->WheelSetups[2].AdditionalOffset = FVector(0.0f, 0.0f, 0.0f);
 
-    _vehicleMovement->WheelSetups[3].WheelClass = UWheelRear::StaticClass();
-    _vehicleMovement->WheelSetups[3].BoneName = FName("WheelRR");
-    _vehicleMovement->WheelSetups[3].AdditionalOffset = FVector(0.0f, 0.0f, 0.0f);
+    VehicleMovement->WheelSetups[3].WheelClass = UWheelRear::StaticClass();
+    VehicleMovement->WheelSetups[3].BoneName = FName("WheelRR");
+    VehicleMovement->WheelSetups[3].AdditionalOffset = FVector(0.0f, 0.0f, 0.0f);
 
-    _vehicleMovement->EngineSetup.MaxRPM = 6000.0f;
-    _vehicleMovement->EngineSetup.MaxTorque = 500.0f;
-    _vehicleMovement->DifferentialSetup.DifferentialType = EVehicleDifferential::AllWheelDrive;
-    _vehicleMovement->TransmissionSetup.bUseAutomaticGears = true;
-    _vehicleMovement->SteeringSetup.SteeringCurve.GetRichCurve()->AddKey(0.0f, 1.0f);
-    _vehicleMovement->SteeringSetup.SteeringCurve.GetRichCurve()->AddKey(40.0f, 0.7f);
-    _vehicleMovement->SteeringSetup.SteeringCurve.GetRichCurve()->AddKey(120.0f, 0.6f);
+    VehicleMovement->EngineSetup.MaxRPM = 6000.0f;
+    VehicleMovement->EngineSetup.MaxTorque = 500.0f;
+    VehicleMovement->DifferentialSetup.DifferentialType = EVehicleDifferential::AllWheelDrive;
+    VehicleMovement->TransmissionSetup.bUseAutomaticGears = true;
+    VehicleMovement->SteeringSetup.SteeringCurve.GetRichCurve()->AddKey(0.0f, 1.0f);
+    VehicleMovement->SteeringSetup.SteeringCurve.GetRichCurve()->AddKey(40.0f, 0.7f);
+    VehicleMovement->SteeringSetup.SteeringCurve.GetRichCurve()->AddKey(120.0f, 0.6f);
 }
 
 bool ACar::CanAllowExit()

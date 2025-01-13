@@ -7,15 +7,15 @@
 #include "VehVarVol2_UE5/Cars/ACar.h"
 #include "VehVarVol2_UE5/Characters/Player/APlayerCharacter.h"
 
-UVehicleInteraction::UVehicleInteraction(FObjectInitializer const& ObjectInitializer): _playerCharacter(nullptr)
+UVehicleInteraction::UVehicleInteraction(FObjectInitializer const& ObjectInitializer): PlayerCharacter(nullptr)
 {
-	_currentVehicle = nullptr;
+	CurrentVehicle = nullptr;
 	_exitOffset = FVector(0.f, -200.f, 0.f);
 }
 
 void UVehicleInteraction::Init(APlayerCharacter* playerCharacter)
 {
-	_playerCharacter = playerCharacter;
+	PlayerCharacter = playerCharacter;
 }
 
 void UVehicleInteraction::EnterVehicle(ACar* Vehicle)
@@ -23,23 +23,23 @@ void UVehicleInteraction::EnterVehicle(ACar* Vehicle)
 	if (!Vehicle)
 		return;
 
-	_currentVehicle = Vehicle;
-	_playerCharacter->GetMovementComponent()->StopMovementImmediately();
-	_playerCharacter->SetActorHiddenInGame(true);
-	_playerCharacter->SetActorEnableCollision(false);
-	Vehicle->PossessVehicle(_playerCharacter);
+	CurrentVehicle = Vehicle;
+	PlayerCharacter->GetMovementComponent()->StopMovementImmediately();
+	PlayerCharacter->SetActorHiddenInGame(true);
+	PlayerCharacter->SetActorEnableCollision(false);
+	Vehicle->PossessVehicle(PlayerCharacter);
 }
 
 void UVehicleInteraction::ExitVehicle()
 {
-	if (!_currentVehicle)
+	if (!CurrentVehicle)
 		return;
 
-	_playerCharacter->SetActorHiddenInGame(false);
-	_playerCharacter->SetActorEnableCollision(true);
+	PlayerCharacter->SetActorHiddenInGame(false);
+	PlayerCharacter->SetActorEnableCollision(true);
 
-	FVector ExitLocation = _currentVehicle->GetActorLocation() + _currentVehicle->GetActorRotation().RotateVector(_exitOffset);
-	_playerCharacter->SetActorLocation(ExitLocation);
-	_playerCharacter->SetActorRotation(_currentVehicle->GetActorRotation());
-	_currentVehicle = nullptr;
+	FVector ExitLocation = CurrentVehicle->GetActorLocation() + CurrentVehicle->GetActorRotation().RotateVector(_exitOffset);
+	PlayerCharacter->SetActorLocation(ExitLocation);
+	PlayerCharacter->SetActorRotation(CurrentVehicle->GetActorRotation());
+	CurrentVehicle = nullptr;
 }

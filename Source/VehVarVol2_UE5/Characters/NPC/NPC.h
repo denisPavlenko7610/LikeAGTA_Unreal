@@ -6,6 +6,7 @@
 #include "VehVarVol2_UE5/Characters/CharacterBase.h"
 #include "NPC.generated.h"
 
+class APatrolPath;
 class UAIPerceptionStimuliSourceComponent;
 class UBehaviorTree;
 
@@ -18,13 +19,17 @@ public:
 	ANPC(FObjectInitializer const& ObjectInitializer);
 	
 	UBehaviorTree* GetBehaviourTree();
+	APatrolPath* GetPatrolPath();
 
 private:
 	void SetupStimulusSource();
 
 	UPROPERTY()
-	UAIPerceptionStimuliSourceComponent* _stimulusSource;
+	UAIPerceptionStimuliSourceComponent* StimulusSource;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI", meta=(AllowPrivateAccess="true"))
-	UBehaviorTree* _tree;
+	UBehaviorTree* Tree;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI", meta=(AllowPrivateAccess="true"))
+	APatrolPath* PatrolPath;
 };

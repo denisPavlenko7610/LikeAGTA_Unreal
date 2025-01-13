@@ -24,14 +24,14 @@ class VEHVARVOL2_UE5_API ACar : public AWheeledVehiclePawn
 public:
 	ACar(FObjectInitializer const& ObjectInitializer);
 
-	void PossessVehicle(APlayerCharacter* PlayerCharacter);
+	void PossessVehicle(APlayerCharacter* playerCharacter);
 	void UnpossessVehicle();
 	void ChangeMappingContext(EMappingContextType ContextType);
 	void SetVehicleCameraActive(bool bActive);
 
-	USceneComponent* GetFireParticlePosition() { return _fireEffectPosition; }
-	UChaosWheeledVehicleMovementComponent* GetVehicleMovementComponent() { return _vehicleMovement; }
-	UVehicleVfx* GetVehicleVFX() { return _vehicleVfx; }
+	USceneComponent* GetFireParticlePosition() { return FireEffectPosition; }
+	UChaosWheeledVehicleMovementComponent* GetVehicleMovementComponent() { return VehicleMovement; }
+	UVehicleVfx* GetVehicleVFX() { return VehicleVfx; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -42,37 +42,37 @@ private:
 	bool CanAllowExit();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision", meta=(AllowPrivateAccess="true"))
-	USphereComponent* _collisionComponent;
+	USphereComponent* CollisionComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision", meta=(AllowPrivateAccess="true"))
-	float _collisionRadius = 250.f;
+	float CollisionRadius = 250.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta=(AllowPrivateAccess="true"))
-	UHealthComponent* _healthComponent;
+	UHealthComponent* HealthComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta=(AllowPrivateAccess="true"))
-	USpringArmComponent* _springArm;
+	USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta=(AllowPrivateAccess="true"))
-	UCameraComponent* _vehicleCamera;
+	UCameraComponent* VehicleCamera;
 
 	UPROPERTY()
-	UChaosWheeledVehicleMovementComponent* _vehicleMovement;
+	UChaosWheeledVehicleMovementComponent* VehicleMovement;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
-	UVehicleVfx* _vehicleVfx;
+	UVehicleVfx* VehicleVfx;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
-	UVehicleInputHandler* _inputHandler;
+	UVehicleInputHandler* InputHandler;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
-	UVehicleHealthHandler* _healthHandler;
+	UVehicleHealthHandler* HealthHandler;
 
 	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess="true"))
-	USceneComponent* _fireEffectPosition;
+	USceneComponent* FireEffectPosition;
 
 	UPROPERTY()
-	APlayerCharacter* _playerCharacter;
+	APlayerCharacter* PlayerCharacter;
 	
 	float _speedExitLimit = 120.f;
 };

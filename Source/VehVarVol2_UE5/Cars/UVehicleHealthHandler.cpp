@@ -4,12 +4,12 @@
 #include "UVehicleVFX.h"
 #include "VehVarVol2_UE5/Components/HealthComponent.h"
 
-void UVehicleHealthHandler::Initialize(ACar* Car, UHealthComponent* HealthComponent)
+void UVehicleHealthHandler::Initialize(ACar* car, UHealthComponent* healthComponent)
 {
-	_car = Car;
-	if (HealthComponent)
+	Car = car;
+	if (healthComponent)
 	{
-		HealthComponent->OnHealthChanged.AddDynamic(this, &UVehicleHealthHandler::OnHealthChanged);
+		healthComponent->OnHealthChanged.AddDynamic(this, &UVehicleHealthHandler::OnHealthChanged);
 	}
 }
 
@@ -21,12 +21,12 @@ void UVehicleHealthHandler::OnHealthChanged(UHealthComponent* OwningHealthComp, 
 
 	if (Health <= 0)
 	{
-		//_car->Destroy();
+		//Car->Destroy();
 		return;
 	}
 
 	if (Health <= _healthLevelToSpawnFire)
-		_car->GetVehicleVFX()->SpawnFireEffect();
+		Car->GetVehicleVFX()->SpawnFireEffect();
 	else if (Health <= _healthLevelToSpawnSmoke)
-		_car->GetVehicleVFX()->SpawnSmokeEffect();
+		Car->GetVehicleVFX()->SpawnSmokeEffect();
 }

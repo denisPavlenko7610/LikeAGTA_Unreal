@@ -17,8 +17,8 @@ class VEHVARVOL2_UE5_API ACharacterBase : public ACharacter {
 public:
 	ACharacterBase(FObjectInitializer const& ObjectInitializer);
 
-	UWeaponComponent* GetWeaponComponent() { return _weaponComponent; }
-	void SetWeaponComponent (UWeaponComponent* Component) { _weaponComponent = Component; }
+	UWeaponComponent* GetWeaponComponent() { return WeaponComponent; }
+	void SetWeaponComponent (UWeaponComponent* Component) { WeaponComponent = Component; }
 
 	UFUNCTION()
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
@@ -27,7 +27,7 @@ public:
 	virtual void OnHealthChanged(UHealthComponent* OwningHealthComp, float Health, float HealthDelta, const UDamageType* DamageType, AController* InstigatedBy,
 	                             AActor* DamageCauser);
 
-	UWeaponComponent* getWeaponComponent() { return _weaponComponent; }
+	UWeaponComponent* getWeaponComponent() { return WeaponComponent; }
 	
 protected:
 	virtual void BeginPlay() override;
@@ -38,12 +38,12 @@ private:
 	void SpawnImpactParticles(FDamageEvent const& DamageEvent);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX", meta=(AllowPrivateAccess="true"))
-	UParticleSystem* _bloodParticle;
+	UParticleSystem* BloodParticle;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
-	UHealthComponent* _healthComponent;
+	UHealthComponent* HealthComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
-	UWeaponComponent* _weaponComponent;
+	UWeaponComponent* WeaponComponent;
 
 };

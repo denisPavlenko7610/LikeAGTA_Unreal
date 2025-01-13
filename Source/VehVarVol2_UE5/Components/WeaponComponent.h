@@ -51,17 +51,17 @@ private:
 	bool _canFire;
 
 	UPROPERTY()
-	APlayerCharacter* _playerCharacter;
+	APlayerCharacter* PlayerCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup", meta=(AllowPrivateAccess="true"))
-	float _damageAmount = 10.0f;
+	float DamageAmount = 10.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation", meta=(AllowPrivateAccess="true"))
-	UAnimMontage* _fireMontage;
+	UAnimMontage* FireMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX", meta=(AllowPrivateAccess="true"))
-	UParticleSystem* _fireParticle;
+	UParticleSystem* FireParticle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX", meta=(AllowPrivateAccess="true"))
-	UParticleSystem* _impactParticle;
+	UParticleSystem* ImpactParticle;
 };

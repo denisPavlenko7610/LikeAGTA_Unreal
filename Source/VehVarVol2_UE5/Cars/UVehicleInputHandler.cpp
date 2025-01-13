@@ -4,55 +4,55 @@
 #include "ACar.h"
 #include "ChaosWheeledVehicleMovementComponent.h"
 
-void UVehicleInputHandler::SetupInput(UInputComponent* PlayerInputComponent, ACar* Car)
+void UVehicleInputHandler::SetupInput(UInputComponent* playerInputComponent, ACar* car)
 {
-    _car = Car;
-    if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+    Car = car;
+    if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(playerInputComponent))
     {
-        EnhancedInputComponent->BindAction(_enterAction, ETriggerEvent::Started, Car, &ACar::UnpossessVehicle);
+        EnhancedInputComponent->BindAction(EnterAction, ETriggerEvent::Started, car, &ACar::UnpossessVehicle);
 
-        EnhancedInputComponent->BindAction(_steeringAction, ETriggerEvent::Triggered, this, &UVehicleInputHandler::Steering);
-        EnhancedInputComponent->BindAction(_steeringAction, ETriggerEvent::Completed, this, &UVehicleInputHandler::Steering);
+        EnhancedInputComponent->BindAction(SteeringAction, ETriggerEvent::Triggered, this, &UVehicleInputHandler::Steering);
+        EnhancedInputComponent->BindAction(SteeringAction, ETriggerEvent::Completed, this, &UVehicleInputHandler::Steering);
 
-        EnhancedInputComponent->BindAction(_throttleAction, ETriggerEvent::Triggered, this, &UVehicleInputHandler::Throttle);
-        EnhancedInputComponent->BindAction(_throttleAction, ETriggerEvent::Completed, this, &UVehicleInputHandler::Throttle);
+        EnhancedInputComponent->BindAction(ThrottleAction, ETriggerEvent::Triggered, this, &UVehicleInputHandler::Throttle);
+        EnhancedInputComponent->BindAction(ThrottleAction, ETriggerEvent::Completed, this, &UVehicleInputHandler::Throttle);
 
-        EnhancedInputComponent->BindAction(_brakeAction, ETriggerEvent::Triggered, this, &UVehicleInputHandler::Brake);
+        EnhancedInputComponent->BindAction(BrakeAction, ETriggerEvent::Triggered, this, &UVehicleInputHandler::Brake);
 
-        EnhancedInputComponent->BindAction(_handbrakeAction, ETriggerEvent::Started, this, &UVehicleInputHandler::StartHandbrake);
-        EnhancedInputComponent->BindAction(_handbrakeAction, ETriggerEvent::Completed, this, &UVehicleInputHandler::StopHandbrake);
+        EnhancedInputComponent->BindAction(HandbrakeAction, ETriggerEvent::Started, this, &UVehicleInputHandler::StartHandbrake);
+        EnhancedInputComponent->BindAction(HandbrakeAction, ETriggerEvent::Completed, this, &UVehicleInputHandler::StopHandbrake);
 
-        EnhancedInputComponent->BindAction(_lookAroundAction, ETriggerEvent::Triggered, this, &UVehicleInputHandler::LookAround);
-        EnhancedInputComponent->BindAction(_lookUpAction, ETriggerEvent::Triggered, this, &UVehicleInputHandler::LookUp);
+        EnhancedInputComponent->BindAction(LookAroundAction, ETriggerEvent::Triggered, this, &UVehicleInputHandler::LookAround);
+        EnhancedInputComponent->BindAction(LookUpAction, ETriggerEvent::Triggered, this, &UVehicleInputHandler::LookUp);
     }
 }
 
 void UVehicleInputHandler::Throttle(const FInputActionValue& Value)
 {
     float ThrottleValue = Value.Get<float>();
-    _car->GetVehicleMovementComponent()->SetThrottleInput(ThrottleValue);
+    Car->GetVehicleMovementComponent()->SetThrottleInput(ThrottleValue);
 }
 
 void UVehicleInputHandler::Steering(const FInputActionValue& Value)
 {
     float SteeringValue = Value.Get<float>();
-    _car->GetVehicleMovementComponent()->SetSteeringInput(SteeringValue);
+    Car->GetVehicleMovementComponent()->SetSteeringInput(SteeringValue);
 }
 
 void UVehicleInputHandler::Brake(const FInputActionValue& Value)
 {
     float BrakeValue = Value.Get<float>();
-    _car->GetVehicleMovementComponent()->SetBrakeInput(BrakeValue);
+    Car->GetVehicleMovementComponent()->SetBrakeInput(BrakeValue);
 }
 
 void UVehicleInputHandler::StartHandbrake(const FInputActionValue& Value)
 {
-    _car->GetVehicleMovementComponent()->SetHandbrakeInput(true);
+    Car->GetVehicleMovementComponent()->SetHandbrakeInput(true);
 }
 
 void UVehicleInputHandler::StopHandbrake(const FInputActionValue& Value)
 {
-    _car->GetVehicleMovementComponent()->SetHandbrakeInput(false);
+    Car->GetVehicleMovementComponent()->SetHandbrakeInput(false);
 }
 
 void UVehicleInputHandler::LookAround(const FInputActionValue& Value)

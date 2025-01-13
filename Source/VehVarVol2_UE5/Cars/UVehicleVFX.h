@@ -21,23 +21,23 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "FireSettings", meta=(AllowPrivateAccess="true"))
-	UParticleSystem* _smokeParticleTemplate;
+	UParticleSystem* SmokeParticleTemplate;
 
 	UPROPERTY(EditAnywhere, Category = "FireSettings", meta=(AllowPrivateAccess="true"))
-	UParticleSystem* _fireParticleTemplate;
+	UParticleSystem* FireParticleTemplate;
 
 	UPROPERTY(EditAnywhere, Category = "FireSettings", meta=(AllowPrivateAccess="true"))
-	FVector _fireScale{0.2f, 0.2f, 0.2f};
+	FVector FireScale{0.2f, 0.2f, 0.2f};
 
 	UPROPERTY(EditAnywhere, Category = "FireSettings", meta=(AllowPrivateAccess="true"))
-	FVector _smokeScale{1.8f, 1.8f, 1.8f};
+	FVector SmokeScale{1.8f, 1.8f, 1.8f};
 
 	UPROPERTY()
-	UParticleSystemComponent* _smokeParticle;
+	UParticleSystemComponent* SmokeParticle;
 
 	UPROPERTY()
-	UParticleSystemComponent* _fireParticle;
+	UParticleSystemComponent* FireParticle;
 
 	UPROPERTY()
-	ACar* _car;
+	ACar* Car;
 };
