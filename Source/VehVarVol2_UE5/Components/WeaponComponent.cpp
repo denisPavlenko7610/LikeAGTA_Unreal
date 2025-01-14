@@ -9,54 +9,80 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "VehVarVol2_UE5/Effects/Audio/AudioPlayer.h"
 #include "VehVarVol2_UE5/Effects/Camera/UCameraShake.h"
-#include "VehVarVol2_UE5/Characters/Player/APlayerCharacter.h"
 #include "Engine/DamageEvents.h"
 #include "Field/FieldSystemComponent.h"
 #include "Field/FieldSystemObjects.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
 #include "VehVarVol2_UE5/Characters/CharacterBase.h"
+#include "VehVarVol2_UE5/Characters/NPC/NPC.h"
+#include "VehVarVol2_UE5/Characters/Player/APlayerCharacter.h"
 #include "VehVarVol2_UE5/Effects/Audio/AudioList.h"
 
-void UWeaponComponent::Init(APlayerCharacter* playerCharacter)
+void UWeaponComponent::Init(ACharacterBase* character)
 {
-	PlayerCharacter = playerCharacter;
+	Character = character;
 }
 
+//Called by notify from fire animation montage
 void UWeaponComponent::Fire()
 {
-	constexpr float length = 1000.f;
-	const FName socketName = "Muzzle";
+	constexpr float Length = 1000.f;
+	const FName SocketName = "Muzzle";
+	FVector StartMuzzlePosition;
+	FVector ForwardVector;
+	FVector EndPosition;
 
-	FVector cameraWorldLocation = PlayerCharacter->GetFollowCamera()->GetComponentLocation();
-	FVector forwardVector = PlayerCharacter->GetFollowCamera()->GetForwardVector();
+	if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(Character))
+	{
+		FVector cameraWorldLocation = PlayerCharacter->GetFollowCamera()->GetComponentLocation();
+		ForwardVector = PlayerCharacter->GetFollowCamera()->GetForwardVector();
+		PlayerCharacter->GetSocketTransformAndVectors(SocketName, StartMuzzlePosition, ForwardVector);
+		EndPosition = ForwardVector * Length + cameraWorldLocation;
+	}
+	else if (ANPC* NPC = Cast<ANPC>(Character))
+	{
+		APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+		StartMuzzlePosition = NPC->GetWeaponComponent()->GetSocketTransform(SocketName).GetLocation();
+		FVector PlayerLocation = Player->GetActorLocation();
+		ForwardVector = (PlayerLocation - StartMuzzlePosition).GetSafeNormal();
+		EndPosition = StartMuzzlePosition + ForwardVector * Length;
 
-	FVector startMuzzlePosition;
-	FVector socketForwardVector;
-	PlayerCharacter->GetSocketTransformAndVectors(socketName, startMuzzlePosition, socketForwardVector);
+		DrawDebugLine(GetWorld(),
+		              StartMuzzlePosition,
+		              EndPosition,
+		              FColor::Red,
+		              false,
+		              1.0f,
+		              0,
+		              1.0f
+		);
+	}
+	else
+	{
+		return;
+	}
 
-	FVector endPosition = forwardVector * length + cameraWorldLocation;
-
-	SpawnFireEffect(socketName, startMuzzlePosition, forwardVector);
+	SpawnFireEffect(SocketName, StartMuzzlePosition, ForwardVector);
 	PlayFireSound();
 
-	FHitResult hitResult;
-	if (CheckWeaponTrace(cameraWorldLocation, endPosition, hitResult))
+	FHitResult HitResult;
+	if (CheckWeaponTrace(StartMuzzlePosition, EndPosition, HitResult))
 	{
-		Hit(hitResult);
+		Hit(HitResult);
 	}
 
 	ShakeCamera();
 }
 
-void UWeaponComponent::FireAnimation(const FInputActionValue& InputActionValue)
+void UWeaponComponent::StartFireMontage(const FInputActionValue& InputActionValue)
 {
-	if (!rifleEquipped)
+	if (!WeaponEquipped)
 		return;
 
 	_canFire = false;
 
 	PlayFireMontage(FireMontage);
-	if (UAnimInstance* AnimInstance = PlayerCharacter->GetMesh()->GetAnimInstance())
+	if (UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance())
 	{
 		AnimInstance->OnMontageEnded.AddUniqueDynamic(this, &UWeaponComponent::OnMontageEnded);
 	}
@@ -65,7 +91,7 @@ void UWeaponComponent::FireAnimation(const FInputActionValue& InputActionValue)
 bool UWeaponComponent::CheckWeaponTrace(const FVector& start, const FVector& end, FHitResult& outHit) const
 {
 	FCollisionQueryParams collisionParams;
-	collisionParams.AddIgnoredActor(PlayerCharacter);
+	collisionParams.AddIgnoredActor(Character);
 
 	return GetWorld()->LineTraceSingleByChannel(
 		outHit,
@@ -97,7 +123,7 @@ void UWeaponComponent::Hit(const FHitResult& hitResult)
 	if (hitActor->FindComponentByClass<UHealthComponent>())
 	{
 		hitResult.GetActor()->TakeDamage(DamageAmount, PointDamageEvent, GetOwner()->GetInstigatorController(),
-		                                 PlayerCharacter);
+		                                 Character);
 	}
 	else
 	{
@@ -142,7 +168,7 @@ void UWeaponComponent::BrakeFractureObject(const FHitResult& HitResult)
 				HitLocation, // Position
 				EFieldFalloffType::Field_FallOff_None
 			);
-			
+
 			FieldSystem->ApplyPhysicsField(
 				true, // Enabled
 				EFieldPhysicsType::Field_ExternalClusterStrain,
@@ -159,7 +185,7 @@ void UWeaponComponent::BrakeFractureObject(const FHitResult& HitResult)
 
 void UWeaponComponent::PlayFireSound() const
 {
-	UAudioPlayer::PlayMetaSoundAtLocation(GetWorld(), PlayerCharacter->GetActorLocation(), AudioList::fireSound);
+	UAudioPlayer::PlayMetaSoundAtLocation(GetWorld(), Character->GetActorLocation(), AudioList::fireSound);
 }
 
 void UWeaponComponent::SpawnFireEffect(FName socketName, FVector& location, FVector& direction)
@@ -189,7 +215,7 @@ void UWeaponComponent::SpawnFireEffect(FName socketName, FVector& location, FVec
 
 void UWeaponComponent::ShakeCamera()
 {
-	if (APlayerController* playerController = Cast<APlayerController>(PlayerCharacter->GetController()))
+	if (APlayerController* playerController = Cast<APlayerController>(Character->GetController()))
 	{
 		playerController->PlayerCameraManager->StartCameraShake(UCameraShake::StaticClass(), 1.0f);
 	}
@@ -197,7 +223,7 @@ void UWeaponComponent::ShakeCamera()
 
 void UWeaponComponent::StopFire(const FInputActionValue& inputActionValue)
 {
-	if (!rifleEquipped)
+	if (!WeaponEquipped)
 		return;
 
 	_canFire = true;
@@ -208,7 +234,7 @@ void UWeaponComponent::PlayFireMontage(UAnimMontage* montage)
 	if (!montage)
 		return;
 
-	if (UAnimInstance* AnimInstance = PlayerCharacter->GetMesh()->GetAnimInstance())
+	if (UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance())
 	{
 		float PlayRate = 1.0f;
 		AnimInstance->Montage_Play(montage, PlayRate);
@@ -220,11 +246,14 @@ void UWeaponComponent::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 	if (_canFire)
 		return;
 
-	FireAnimation({});
+	if (APlayerCharacter* Player = Cast<APlayerCharacter>(Character))
+	{
+		StartFireMontage({});
+	}
 }
 
 void UWeaponComponent::ToggleWeapon(const FInputActionValue& Value)
 {
-	rifleEquipped = !rifleEquipped;
-	SetHiddenInGame(!rifleEquipped);
+	WeaponEquipped = !WeaponEquipped;
+	SetHiddenInGame(!WeaponEquipped);
 }

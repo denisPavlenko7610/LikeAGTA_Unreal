@@ -15,7 +15,7 @@ class VEHVARVOL2_UE5_API ACharacterBase : public ACharacter {
 	GENERATED_BODY()
 
 public:
-	ACharacterBase(FObjectInitializer const& ObjectInitializer);
+	ACharacterBase();
 
 	UWeaponComponent* GetWeaponComponent() { return WeaponComponent; }
 	void SetWeaponComponent (UWeaponComponent* Component) { WeaponComponent = Component; }
@@ -26,16 +26,9 @@ public:
 	UFUNCTION()
 	virtual void OnHealthChanged(UHealthComponent* OwningHealthComp, float Health, float HealthDelta, const UDamageType* DamageType, AController* InstigatedBy,
 	                             AActor* DamageCauser);
-
-	UWeaponComponent* getWeaponComponent() { return WeaponComponent; }
 	
 protected:
 	virtual void BeginPlay() override;
-
-private:
-	void Die();
-
-	void SpawnImpactParticles(FDamageEvent const& DamageEvent);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX", meta=(AllowPrivateAccess="true"))
 	UParticleSystem* BloodParticle;
@@ -46,4 +39,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
 	UWeaponComponent* WeaponComponent;
 
+private:
+	void Die();
+
+	void SpawnImpactParticles(FDamageEvent const& DamageEvent);
 };

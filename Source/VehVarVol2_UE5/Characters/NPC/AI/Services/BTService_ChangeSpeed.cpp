@@ -10,7 +10,7 @@
 UBTService_ChangeSpeed::UBTService_ChangeSpeed()
 {
 	bNotifyBecomeRelevant = true;
-	NodeName = "Change speed";
+	NodeName = TEXT("Change speed");
 }
 
 void UBTService_ChangeSpeed::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -25,5 +25,4 @@ void UBTService_ChangeSpeed::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp,
 		return;
 
 	NPC->GetCharacterMovement()->MaxWalkSpeed = Speed;
-	
 }

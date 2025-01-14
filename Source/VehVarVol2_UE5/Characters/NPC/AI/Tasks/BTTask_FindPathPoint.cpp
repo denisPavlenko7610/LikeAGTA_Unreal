@@ -10,7 +10,7 @@
 
 UBTTask_FindPathPoint::UBTTask_FindPathPoint()
 {
-	NodeName = "Find Path point";
+	NodeName = TEXT("Find Path point");
 }
 
 EBTNodeResult::Type UBTTask_FindPathPoint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

@@ -13,7 +13,7 @@
 #include "VehVarVol2_UE5/Components/HealthComponent.h"
 
 
-ACharacterBase::ACharacterBase(FObjectInitializer const& ObjectInitializer)
+ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));

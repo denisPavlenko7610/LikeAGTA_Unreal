@@ -16,8 +16,8 @@ void UFireAnimNotify::Fire(USkeletalMeshComponent* skeletalMesh)
 	if (skeletalMesh->GetOwner() == nullptr)
 		return;
 	
-	if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(skeletalMesh->GetOwner()))
+	if (ACharacterBase* Character = Cast<ACharacterBase>(skeletalMesh->GetOwner()))
 	{
-		PlayerCharacter->getWeaponComponent()->Fire();
+		Character->GetWeaponComponent()->Fire();
 	}
 }

@@ -22,7 +22,7 @@
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
-APlayerCharacter::APlayerCharacter(FObjectInitializer const& ObjectInitializer) : Super(ObjectInitializer)
+APlayerCharacter::APlayerCharacter()
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -94,7 +94,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(TakeWeaponAction, ETriggerEvent::Started, GetWeaponComponent(),
 		                                   &UWeaponComponent::ToggleWeapon);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, GetWeaponComponent(),
-		                                   &UWeaponComponent::FireAnimation);
+		                                   &UWeaponComponent::StartFireMontage);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, GetWeaponComponent(),
 		                                   &UWeaponComponent::StopFire);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &ThisClass::Aim);
@@ -136,7 +136,7 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 
 void APlayerCharacter::Sprint(const FInputActionValue& Value)
 {
-	if (GetWeaponComponent()->rifleEquipped)
+	if (GetWeaponComponent()->IsWeaponEquipped())
 		return;
 
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
@@ -160,7 +160,7 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 
 void APlayerCharacter::Aim(const FInputActionValue& Value)
 {
-	if (!GetWeaponComponent()->rifleEquipped)
+	if (!GetWeaponComponent()->IsWeaponEquipped())
 		return;
 
 	HUD->ShowCrosshair();
@@ -168,7 +168,7 @@ void APlayerCharacter::Aim(const FInputActionValue& Value)
 	_rightOffset = FVector2d(15, 50);
 	_targetArmLength = 150.0f;
 	_elapsedTimeS = 0.0f;
-	GetWeaponComponent()->IsAiming = true;
+	GetWeaponComponent()->SetAimingWeapon(true);
 
 	GetWorld()->GetTimerManager().SetTimer(LerpTimerHandle, this, &APlayerCharacter::UpdateAimLerp,
 	                                       GetWorld()->GetDeltaSeconds(), true);
@@ -176,7 +176,7 @@ void APlayerCharacter::Aim(const FInputActionValue& Value)
 
 void APlayerCharacter::StopAim(const FInputActionValue& Value)
 {
-	if (!GetWeaponComponent()->rifleEquipped)
+	if (!GetWeaponComponent()->IsWeaponEquipped())
 		return;
 
 	HUD->HideCrosshair();
@@ -184,7 +184,7 @@ void APlayerCharacter::StopAim(const FInputActionValue& Value)
 	_rightOffset = FVector2d(0, 0);
 	_targetArmLength = 300.0f;
 	_elapsedTimeS = 0.0f;
-	GetWeaponComponent()->IsAiming = false;
+	GetWeaponComponent()->SetAimingWeapon(false);
 
 	GetWorld()->GetTimerManager().SetTimer(LerpTimerHandle, this, &APlayerCharacter::UpdateAimLerp,
 	                                       GetWorld()->GetDeltaSeconds(), true);

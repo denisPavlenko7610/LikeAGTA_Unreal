@@ -9,7 +9,7 @@
 
 UUBTTask_ChasePlayer::UUBTTask_ChasePlayer()
 {
-	NodeName = "Chase player";
+	NodeName = TEXT("Chase player");
 }
 
 EBTNodeResult::Type UUBTTask_ChasePlayer::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

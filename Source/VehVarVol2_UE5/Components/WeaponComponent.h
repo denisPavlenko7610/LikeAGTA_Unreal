@@ -8,7 +8,7 @@
 #include "WeaponComponent.generated.h"
 
 class UCameraComponent;
-class APlayerCharacter;
+class ACharacterBase;
 struct FInputActionValue;
 /**
  * 
@@ -18,7 +18,7 @@ class VEHVARVOL2_UE5_API UWeaponComponent : public USkeletalMeshComponent {
 	GENERATED_BODY()
 
 public:
-	void Init(APlayerCharacter* playerCharacter);
+	void Init(ACharacterBase* Character);
 	void Fire();
 	
 	void ShakeCamera();
@@ -26,18 +26,13 @@ public:
 	void StopFire(const FInputActionValue& inputActionValue);
 	void PlayFireMontage(UAnimMontage* montage);
 	void PlayFireSound() const;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
-	bool rifleEquipped;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings)
-	bool IsAiming;
+	UAnimMontage* GetFireMontage() const { return FireMontage; }
 
 	void Hit(const FHitResult& hitResult);
 	void BrakeFractureObject(const FHitResult& HitResult);
 
 	UFUNCTION()
-	void FireAnimation(const FInputActionValue& InputActionValue);
+	void StartFireMontage(const FInputActionValue& InputActionValue);
 
 	UFUNCTION()
 	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
@@ -45,13 +40,23 @@ public:
 	void SpawnFireEffect(FName socketName, FVector& location, FVector& direction);
 	void ToggleWeapon(const FInputActionValue& Value);
 
+	bool CanFire() const { return _canFire; }
+	bool IsWeaponEquipped() const { return WeaponEquipped; }
+	void SetWeaponEquipped(bool value) { WeaponEquipped = value; }
+	bool IsAimingWeapon() const { return IsAiming; }
+	void SetAimingWeapon(bool value) { IsAiming = value; }
+
 private:
 	bool CheckWeaponTrace(const FVector& start, const FVector& end, FHitResult& outHit) const;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings, meta=(AllowPrivateAccess="true"))
+	bool WeaponEquipped;
 
-	bool _canFire;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Settings, meta=(AllowPrivateAccess="true"))
+	bool IsAiming;
+	
 	UPROPERTY()
-	APlayerCharacter* PlayerCharacter;
+	ACharacterBase* Character;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup", meta=(AllowPrivateAccess="true"))
 	float DamageAmount = 10.0f;
@@ -64,4 +69,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX", meta=(AllowPrivateAccess="true"))
 	UParticleSystem* ImpactParticle;
+
+	bool _canFire;
 };

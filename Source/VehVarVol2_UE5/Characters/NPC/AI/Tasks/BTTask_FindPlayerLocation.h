@@ -15,7 +15,7 @@ class VEHVARVOL2_UE5_API UBTTask_FindPlayerLocation : public UBTTask_BlackboardB
 	GENERATED_BODY()
 
 public:
-	UBTTask_FindPlayerLocation(FObjectInitializer const& ObjectInitializer);
+	UBTTask_FindPlayerLocation();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory) override;
 
 private:

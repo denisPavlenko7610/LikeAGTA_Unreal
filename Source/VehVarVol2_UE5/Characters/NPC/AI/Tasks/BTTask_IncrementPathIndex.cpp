@@ -10,7 +10,7 @@
 
 UBTTask_IncrementPathIndex::UBTTask_IncrementPathIndex()
 {
-	NodeName = "Increment path index";
+	NodeName = TEXT("Increment path index");
 }
 
 EBTNodeResult::Type UBTTask_IncrementPathIndex::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

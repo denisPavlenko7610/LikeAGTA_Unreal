@@ -8,7 +8,7 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "VehVarVol2_UE5/Characters/Player/APlayerCharacter.h"
 
-inline ANPC_AIController::ANPC_AIController(FObjectInitializer const& ObjectInitializer)
+inline ANPC_AIController::ANPC_AIController()
 {
 	SetupPerceptionSystem();
 }

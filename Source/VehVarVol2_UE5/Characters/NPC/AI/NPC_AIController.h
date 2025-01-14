@@ -16,7 +16,7 @@ class VEHVARVOL2_UE5_API ANPC_AIController : public AAIController
 {
 	GENERATED_BODY()
 public:
-	ANPC_AIController(FObjectInitializer const& ObjectInitializer);
+	ANPC_AIController();
 
 protected:
 	virtual void OnPossess(APawn* InPawn) override;

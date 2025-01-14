@@ -3,12 +3,13 @@
 
 #include "NPC.h"
 
+#include "InputActionValue.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
 #include "VehVarVol2_UE5/Components/WeaponComponent.h"
 
 
-ANPC::ANPC(FObjectInitializer const& ObjectInitializer): Super(ObjectInitializer)
+ANPC::ANPC()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
@@ -34,6 +35,20 @@ UBehaviorTree* ANPC::GetBehaviourTree()
 APatrolPath* ANPC::GetPatrolPath()
 {
 	return PatrolPath;
+}
+
+void ANPC::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	
+	GetWeaponComponent()->Init(this);
+}
+
+int ANPC::FireAttack_Implementation()
+{
+	FInputActionValue InputActionValue = FInputActionValue();
+	WeaponComponent->StartFireMontage(InputActionValue);
+	return 0;
 }
 
 

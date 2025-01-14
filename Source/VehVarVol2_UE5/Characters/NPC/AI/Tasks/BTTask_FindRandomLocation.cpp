@@ -7,10 +7,9 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "VehVarVol2_UE5/Characters/NPC/AI/NPC_AIController.h"
 
-UBTTask_FindRandomLocation::UBTTask_FindRandomLocation(FObjectInitializer const& ObjectInitializer) : Super(
-	ObjectInitializer)
+UBTTask_FindRandomLocation::UBTTask_FindRandomLocation()
 {
-	NodeName = "Find Random Location in NavMesh";
+	NodeName = TEXT("Find Random Location in NavMesh");
 }
 
 EBTNodeResult::Type UBTTask_FindRandomLocation::ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory)

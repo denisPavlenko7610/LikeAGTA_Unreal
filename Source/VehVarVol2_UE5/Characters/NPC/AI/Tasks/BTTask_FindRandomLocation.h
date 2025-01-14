@@ -15,7 +15,7 @@ class VEHVARVOL2_UE5_API UBTTask_FindRandomLocation : public UBTTask_BlackboardB
 	GENERATED_BODY()
 
 public:
-	UBTTask_FindRandomLocation(FObjectInitializer const& ObjectInitializer);
+	UBTTask_FindRandomLocation();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory) override;
 
 private:

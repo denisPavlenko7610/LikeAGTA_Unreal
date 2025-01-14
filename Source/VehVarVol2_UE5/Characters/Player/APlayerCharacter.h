@@ -1,7 +1,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "VehVarVol2_UE5/Characters/CharacterBase.h"
 #include "APlayerCharacter.generated.h"
@@ -31,7 +30,7 @@ public:
 	USpringArmComponent* getCameraBoom() const { return CameraBoom; }
 	UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	
-	APlayerCharacter(FObjectInitializer const& ObjectInitializer);
+	APlayerCharacter();
 	virtual void BeginPlay() override;
 
 	void GetSocketTransformAndVectors(const FName& socketName, FVector& outStart, FVector& outForwardVector);
@@ -58,17 +57,6 @@ protected:
 	                             AActor* DamageCauser) override;
 
 private:
-	float _initialArmLength;
-	float _targetArmLength;
-	float _aimLerpDurationS;
-	float _elapsedTimeS;
-	FVector2d _rightOffset;
-	FTimerHandle LerpTimerHandle;
-
-	float pitchLimit = 100.0f;
-	float yawLimit = 80.0f;
-	float zLimit = 90.0f;
-
 	UPROPERTY()
 	UVehicleInteraction* VehicleInteraction;
 
@@ -116,5 +104,16 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta=(AllowPrivateAccess="true"))
 	float SprintSpeed = 600.0f;
+
+	float _initialArmLength;
+	float _targetArmLength;
+	float _aimLerpDurationS;
+	float _elapsedTimeS;
+	FVector2d _rightOffset;
+	FTimerHandle LerpTimerHandle;
+
+	float pitchLimit = 100.0f;
+	float yawLimit = 80.0f;
+	float zLimit = 90.0f;
 };
 
