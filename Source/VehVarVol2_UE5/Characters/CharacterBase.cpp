@@ -22,11 +22,8 @@ ACharacterBase::ACharacterBase()
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (HealthComponent)
-	{
-		HealthComponent->OnHealthChanged.AddDynamic(this, &ACharacterBase::OnHealthChanged);
-	}
+	
+	HealthComponent->OnHealthChanged.AddDynamic(this, &ACharacterBase::OnHealthChanged);
 }
 
 float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

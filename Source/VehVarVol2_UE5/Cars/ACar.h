@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "EMappingContextType.h"
 #include "WheeledVehiclePawn.h"
+#include "VehVarVol2_UE5/Characters/IDamagable.h"
 #include "ACar.generated.h"
 
 class UVehicleVfx;
@@ -17,7 +18,7 @@ class UVehicleInputHandler;
 class UVehicleHealthHandler;
 
 UCLASS(Abstract)
-class VEHVARVOL2_UE5_API ACar : public AWheeledVehiclePawn
+class VEHVARVOL2_UE5_API ACar : public AWheeledVehiclePawn, public IIDamagable
 {
 	GENERATED_BODY()
 

@@ -52,9 +52,9 @@ protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	
 	void CreateHUD();
-
-	virtual void OnHealthChanged(UHealthComponent* OwningHealthComp, float Health, float HealthDelta, const UDamageType* DamageType, AController* InstigatedBy,
-	                             AActor* DamageCauser) override;
+	
+	virtual void OnHealthChanged(UHealthComponent* OwningHealthComp, float Health, float HealthDelta,
+		const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser) override;
 
 private:
 	UPROPERTY()

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "IDamagable.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
@@ -11,7 +12,8 @@ class UWeaponComponent;
 class UHealthComponent;
 
 UCLASS()
-class VEHVARVOL2_UE5_API ACharacterBase : public ACharacter {
+class VEHVARVOL2_UE5_API ACharacterBase : public ACharacter, public IIDamagable
+{
 	GENERATED_BODY()
 
 public:

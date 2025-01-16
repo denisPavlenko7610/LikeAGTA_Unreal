@@ -1,6 +1,5 @@
 #include "WeaponComponent.h"
 
-#include "HealthComponent.h"
 #include "InputActionValue.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
@@ -42,20 +41,23 @@ void UWeaponComponent::Fire()
 	else if (ANPC* NPC = Cast<ANPC>(Character))
 	{
 		APlayerCharacter* Player = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+		if (!IsValid(Player))
+			return;
+		
 		StartMuzzlePosition = NPC->GetWeaponComponent()->GetSocketTransform(SocketName).GetLocation();
 		FVector PlayerLocation = Player->GetActorLocation();
 		ForwardVector = (PlayerLocation - StartMuzzlePosition).GetSafeNormal();
 		EndPosition = StartMuzzlePosition + ForwardVector * Length;
 
-		DrawDebugLine(GetWorld(),
-		              StartMuzzlePosition,
-		              EndPosition,
-		              FColor::Red,
-		              false,
-		              1.0f,
-		              0,
-		              1.0f
-		);
+		// DrawDebugLine(GetWorld(),
+		//               StartMuzzlePosition,
+		//               EndPosition,
+		//               FColor::Red,
+		//               false,
+		//               1.0f,
+		//               0,
+		//               1.0f
+		// );
 	}
 	else
 	{
@@ -91,7 +93,7 @@ void UWeaponComponent::StartFireMontage(const FInputActionValue& InputActionValu
 bool UWeaponComponent::CheckWeaponTrace(const FVector& start, const FVector& end, FHitResult& outHit) const
 {
 	FCollisionQueryParams collisionParams;
-	collisionParams.AddIgnoredActor(Character);
+	//collisionParams.AddIgnoredActor(Character);
 
 	return GetWorld()->LineTraceSingleByChannel(
 		outHit,
@@ -120,7 +122,7 @@ void UWeaponComponent::Hit(const FHitResult& hitResult)
 	if (!hitActor)
 		return;
 
-	if (hitActor->FindComponentByClass<UHealthComponent>())
+	if (hitActor->Implements<UIDamagable>())
 	{
 		hitResult.GetActor()->TakeDamage(DamageAmount, PointDamageEvent, GetOwner()->GetInstigatorController(),
 		                                 Character);

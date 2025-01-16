@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "ICombat.h"
 #include "VehVarVol2_UE5/Characters/CharacterBase.h"
+#include "VehVarVol2_UE5/Characters/IDamagable.h"
 #include "NPC.generated.h"
 
 class APatrolPath;
