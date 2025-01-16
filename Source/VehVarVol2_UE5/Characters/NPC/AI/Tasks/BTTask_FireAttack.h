@@ -20,8 +20,5 @@ public:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory) override;
 
 private:
-	bool IsFireAnimationEnded(ANPC* NPC);
-	bool CanFire(ANPC* NPC, float CurrentTime);
-	
-	const float _fireRateInS = 1.0f;
+	bool CanFire(ANPC* NPC);
 };

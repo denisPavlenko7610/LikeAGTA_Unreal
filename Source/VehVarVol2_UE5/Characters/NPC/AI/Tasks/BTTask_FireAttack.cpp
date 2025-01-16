@@ -15,12 +15,6 @@ UBTTask_FireAttack::UBTTask_FireAttack()
 
 EBTNodeResult::Type UBTTask_FireAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory)
 {
-	if (bool IsOutOfRange = !OwnerComponent.GetBlackboardComponent()->GetValueAsBool(GetSelectedBlackboardKey()))
-	{
-		FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
-		return EBTNodeResult::Succeeded;
-	}
-
 	AAIController* AIController = OwnerComponent.GetAIOwner();
 	if (!AIController)
 		return EBTNodeResult::Failed;
@@ -32,31 +26,29 @@ EBTNodeResult::Type UBTTask_FireAttack::ExecuteTask(UBehaviorTreeComponent& Owne
 	IICombat* ICombat = Cast<IICombat>(NPC);
 	if (!ICombat)
 		return EBTNodeResult::Failed;
-	
-	const float CurrentTime = GetWorld()->GetTimeSeconds();
-	if (CanFire(NPC, CurrentTime))
+
+	UWeaponComponent* WeaponComponent = NPC->GetWeaponComponent();
+	if (CanFire(NPC))
 	{
-		UWeaponComponent* WeaponComponent = NPC->GetWeaponComponent();
 		WeaponComponent->SetHiddenInGame(false);
 		WeaponComponent->SetAimingWeapon(true);
 		WeaponComponent->SetWeaponEquipped(true);
 		ICombat->Execute_FireAttack(NPC);
-
-		NPC->SetLastFireTime(CurrentTime);
+	}
+	else
+	{
+		WeaponComponent->SetHiddenInGame(true);
+		WeaponComponent->SetAimingWeapon(false);
+		WeaponComponent->SetWeaponEquipped(false);
 	}
 
 	FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;
 }
 
-bool UBTTask_FireAttack::IsFireAnimationEnded(ANPC* NPC)
+bool UBTTask_FireAttack::CanFire(ANPC* NPC)
 {
 	UAnimInstance* AnimInstance = NPC->GetMesh()->GetAnimInstance();
 	UAnimMontage* Montage = NPC->GetWeaponComponent()->GetFireMontage();
 	return  AnimInstance && !AnimInstance->Montage_IsPlaying(Montage);
-}
-
-bool UBTTask_FireAttack::CanFire(ANPC* NPC, float CurrentTime)
-{
-	return CurrentTime - NPC->GetLastFireTime() >= _fireRateInS && IsFireAnimationEnded(NPC);
 }

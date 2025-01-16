@@ -22,8 +22,6 @@ public:
 	
 	UBehaviorTree* GetBehaviourTree();
 	APatrolPath* GetPatrolPath();
-	float GetLastFireTime() const { return _lastFireTime; }
-	void SetLastFireTime(float value) { _lastFireTime = value; }
 
 protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
@@ -40,6 +38,4 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI", meta=(AllowPrivateAccess="true"))
 	APatrolPath* PatrolPath;
-	
-	float _lastFireTime;
 };
